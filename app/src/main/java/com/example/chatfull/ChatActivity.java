@@ -1,27 +1,19 @@
 package com.example.chatfull;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ViewAnimator;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.ArrayList;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class ChatActivity extends AppCompatActivity {
 
     public static TextView messageDisplay;
-    public static String receivedMsg = null, clientMsg = null;
+    public String clientMsg = null;
     EditText msgInput;
     User user;
-    ArrayList<String> received_message = new ArrayList<>();
     SendMessage sender;
     MessageReceiveServer messageReceiveServer;
 
@@ -29,7 +21,6 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
 
         user = (User) getIntent().getSerializableExtra("user");
 
@@ -53,6 +44,7 @@ public class ChatActivity extends AppCompatActivity {
     public void stopSender(){
         sender.cancel(true);
     }
+
     public void setMessage(final String msg){
         Log.e("INSET",msg);
         runOnUiThread(new Runnable() {

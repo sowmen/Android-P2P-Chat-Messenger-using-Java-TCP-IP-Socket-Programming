@@ -1,13 +1,10 @@
 package com.example.chatfull;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
-
+import androidx.appcompat.app.AppCompatActivity;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -85,7 +82,6 @@ public class ShowInfoActivity extends AppCompatActivity {
             }
 
         } catch (SocketException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             Log.e("in_get_ip","IP NOT FOUND");
         }

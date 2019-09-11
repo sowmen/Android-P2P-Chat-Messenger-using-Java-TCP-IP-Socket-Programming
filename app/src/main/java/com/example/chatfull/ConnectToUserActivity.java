@@ -1,13 +1,12 @@
 package com.example.chatfull;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class ConnectToUserActivity extends AppCompatActivity {
 
@@ -19,7 +18,7 @@ public class ConnectToUserActivity extends AppCompatActivity {
 
     public void setUser(User user) {
         this.user = user;
-        Log.e("BeforeChat", myClient.user.toString());
+//        Log.e("BeforeChat", myClient.user.toString());
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         intent.putExtra("user", myClient.user);
         startActivity(intent);

@@ -14,7 +14,6 @@ public class MessageReceiveServer{
     ChatActivity activity;
     ServerSocket serverSocket;
     boolean stop = false;
-    int cnt = 0;
 
     MessageReceiveServer(String ip_address, int port, ChatActivity activity){
         this.ip_address = ip_address;
@@ -31,9 +30,6 @@ public class MessageReceiveServer{
             try {
                 serverSocket = new ServerSocket(port);
                 while (stop == false) {
-                    cnt++;
-                    Log.e("Abar",""+cnt);
-
                     Socket received_userSocket = serverSocket.accept();
                     Log.e("Receive","Connected");
 
@@ -43,19 +39,17 @@ public class MessageReceiveServer{
                         message = input.readLine();
                         Log.e("Receive",message);
                         activity.setMessage(message);
-                        System.out.println("BAIRE=============================================>");
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
 
                 }
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
     }
+
     public void onDestroy(){
         if(serverSocket != null){
             try {

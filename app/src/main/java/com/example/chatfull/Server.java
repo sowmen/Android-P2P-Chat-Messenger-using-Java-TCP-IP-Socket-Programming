@@ -57,7 +57,6 @@ public class Server {
                         out.println(response_message);
 
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
 
@@ -68,11 +67,11 @@ public class Server {
                             activity.setConnected(true);
                         }
                     });
+
                     stop = true;
                     break;
                 }
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             onDestroy();
@@ -86,7 +85,6 @@ public class Server {
                 serverSocket.close();
                 stop = true;
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

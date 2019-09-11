@@ -44,7 +44,6 @@ public class Client extends AsyncTask<Void, Void, String> {
             serverResponse = input.readLine();
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             serverResponse = "UnknownHostException: " + e.toString();
         }
@@ -54,7 +53,6 @@ public class Client extends AsyncTask<Void, Void, String> {
                 try {
                     clientSocket.close();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
