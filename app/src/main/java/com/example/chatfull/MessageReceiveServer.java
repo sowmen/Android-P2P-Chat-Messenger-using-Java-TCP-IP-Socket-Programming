@@ -13,6 +13,7 @@ public class MessageReceiveServer{
     int port;
     ChatActivity activity;
     ServerSocket serverSocket;
+    boolean stop = false;
     int cnt = 0;
 
     MessageReceiveServer(String ip_address, int port, ChatActivity activity){
@@ -29,7 +30,7 @@ public class MessageReceiveServer{
         public void run() {
             try {
                 serverSocket = new ServerSocket(port);
-                while (true) {
+                while (stop == false) {
                     cnt++;
                     Log.e("Abar",""+cnt);
 
@@ -51,6 +52,16 @@ public class MessageReceiveServer{
                 }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+    public void onDestroy(){
+        if(serverSocket != null){
+            try {
+                serverSocket.close();
+                stop = true;
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

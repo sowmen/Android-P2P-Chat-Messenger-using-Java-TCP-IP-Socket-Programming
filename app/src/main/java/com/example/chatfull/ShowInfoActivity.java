@@ -17,6 +17,7 @@ public class ShowInfoActivity extends AppCompatActivity {
 
     static final int selfPort = 8080;
     Server myServer;
+    boolean paused = false;
 
     public void setConnected(boolean connected) {
         this.connected = connected;
@@ -42,6 +43,21 @@ public class ShowInfoActivity extends AppCompatActivity {
 
         myServer = new Server(this, getSelfIpAddress(), getSelfPort());
         Log.e("ShowActivity","CreatedServer");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(paused) {
+            myServer.onDestroy();
+            recreate();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        paused = true;
     }
 
     public static int getSelfPort() {

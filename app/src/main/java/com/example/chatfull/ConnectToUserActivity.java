@@ -15,6 +15,7 @@ public class ConnectToUserActivity extends AppCompatActivity {
     Button connectBtn;
     Client myClient;
     User user;
+    boolean paused = false;
 
     public void setUser(User user) {
         this.user = user;
@@ -32,6 +33,21 @@ public class ConnectToUserActivity extends AppCompatActivity {
         ipInput = findViewById(R.id.ipInput);
         portInput = findViewById(R.id.portInput);
         connectBtn = findViewById(R.id.connectBtn);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(paused) {
+            myClient.cancel(true);
+            recreate();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        paused = true;
     }
 
     public void connectBtnListener(View view){

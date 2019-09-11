@@ -16,6 +16,7 @@ public class Server {
     String self_ip_address;
     int self_port;
     public User user;
+    boolean stop = false;
 
     public Server(ShowInfoActivity activity, String self_ip_address, int self_port) {
         this.activity = activity;
@@ -33,7 +34,7 @@ public class Server {
                 // create ServerSocket using specified port
                 serverSocket = new ServerSocket(self_port);
 
-                while (true) {
+                while (stop == false) {
                     // block the call until connection is created and return
                     // Socket object
                     Log.e("Server","InsideServer");
@@ -67,20 +68,26 @@ public class Server {
                             activity.setConnected(true);
                         }
                     });
+                    stop = true;
                     break;
                 }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            if (serverSocket != null) {
-                try {
-                    Log.e("Server","Close Server");
-                    serverSocket.close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+            onDestroy();
+        }
+    }
+
+    void onDestroy(){
+        if (serverSocket != null) {
+            try {
+                Log.e("Server","Close Server");
+                serverSocket.close();
+                stop = true;
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
     }

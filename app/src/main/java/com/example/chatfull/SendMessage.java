@@ -41,7 +41,6 @@ public class SendMessage extends AsyncTask<Void, Void, String> {
             Log.e("SendMSG","ConnectHoyNai"+message);
             e.printStackTrace();
         }
-//        Thread.interrupted();
         return "";
     }
 

@@ -23,6 +23,7 @@ public class ChatActivity extends AppCompatActivity {
     User user;
     ArrayList<String> received_message = new ArrayList<>();
     SendMessage sender;
+    MessageReceiveServer messageReceiveServer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class ChatActivity extends AppCompatActivity {
         messageDisplay.setText("Connected to: " + user.getIpAddress() + ":" + user.getPort() + "\n");
         messageDisplay.append("Self: " + ShowInfoActivity.getSelfIpAddress() + ":" + ShowInfoActivity.getSelfPort());
 
-        new MessageReceiveServer(ShowInfoActivity.getSelfIpAddress(),ShowInfoActivity.getSelfPort(),this);
+        messageReceiveServer = new MessageReceiveServer(ShowInfoActivity.getSelfIpAddress(),ShowInfoActivity.getSelfPort(),this);
     }
 
     public void OnMsgSendBtnClick(View view){
@@ -60,5 +61,12 @@ public class ChatActivity extends AppCompatActivity {
                 messageDisplay.append("\nReceived===>" + msg);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sender.cancel(true);
+        messageReceiveServer.onDestroy();
     }
 }
