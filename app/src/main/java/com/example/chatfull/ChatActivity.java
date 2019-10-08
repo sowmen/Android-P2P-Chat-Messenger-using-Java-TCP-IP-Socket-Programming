@@ -10,12 +10,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ChatActivity extends AppCompatActivity {
 
-    public static TextView messageDisplay;
-    public String clientMsg = null;
-    EditText msgInput;
-    User user;
-    SendMessage sender;
-    MessageReceiveServer messageReceiveServer;
+    private TextView messageDisplay;
+    private String clientMsg = null;
+    private EditText msgInput;
+    private User user;
+    private SendMessage sender;
+    private MessageReceiveServer messageReceiveServer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +30,7 @@ public class ChatActivity extends AppCompatActivity {
         messageDisplay.setText("Connected to: " + user.getIpAddress() + ":" + user.getPort() + "\n");
         messageDisplay.append("Self: " + ShowInfoActivity.getSelfIpAddress() + ":" + ShowInfoActivity.getSelfPort());
 
-        messageReceiveServer = new MessageReceiveServer(ShowInfoActivity.getSelfIpAddress(),ShowInfoActivity.getSelfPort(),this);
+        messageReceiveServer = new MessageReceiveServer(ShowInfoActivity.getSelfIpAddress(), ShowInfoActivity.getSelfPort(),this);
     }
 
     public void OnMsgSendBtnClick(View view){
@@ -38,15 +38,24 @@ public class ChatActivity extends AppCompatActivity {
         msgInput.setText("");
         messageDisplay.append("\nSent===>" + clientMsg);
 
-        SendMessage sender = new SendMessage(user.getIpAddress(), user.getPort(),clientMsg,this);
+        sender = new SendMessage(user.getIpAddress(), user.getPort(),clientMsg,this);
         sender.execute();
     }
     public void stopSender(){
-        sender.cancel(true);
+        if(sender != null)
+            sender.cancel(true);
     }
 
     public void setMessage(final String msg){
-        Log.e("INSET",msg);
+        Log.e("IN_SET",msg);
+        if(msg.equalsIgnoreCase("OFFLINE")){
+            if(sender != null)
+                sender.cancel(true);
+            if(messageReceiveServer != null)
+                messageReceiveServer.onDestroy();
+            this.finish();
+            return;
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -57,8 +66,29 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        Log.e("CHAT_ACTIVITY","DESTROY");
+        sender = new SendMessage(user.getIpAddress(), user.getPort(), "OFFLINE",this);
+        sender.execute();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(sender != null)
+            sender.cancel(true);
+        if(messageReceiveServer != null)
+            messageReceiveServer.onDestroy();
         super.onDestroy();
-        sender.cancel(true);
-        messageReceiveServer.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.e("CHAT_ACTIVITY", "PAUSE");
+        super.onPause();
+        if(sender != null && !sender.isCancelled())
+            sender.cancel(true);
+        if(messageReceiveServer != null)
+            messageReceiveServer.onDestroy();
+
     }
 }

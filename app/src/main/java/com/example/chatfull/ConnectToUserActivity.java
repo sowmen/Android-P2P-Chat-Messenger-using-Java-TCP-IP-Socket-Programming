@@ -10,15 +10,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ConnectToUserActivity extends AppCompatActivity {
 
-    EditText ipInput, portInput;
-    Button connectBtn;
-    Client myClient;
-    User user;
-    boolean paused = false;
+    private EditText ipInput, portInput;
+    private Button connectBtn;
+    private Client myClient;
+    private User user;
 
     public void setUser(User user) {
         this.user = user;
-//        Log.e("BeforeChat", myClient.user.toString());
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         intent.putExtra("user", myClient.user);
         startActivity(intent);
@@ -37,16 +35,22 @@ public class ConnectToUserActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(paused) {
+        if(myClient != null && !myClient.isCancelled())
             myClient.cancel(true);
-            recreate();
-        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        paused = true;
+        if(myClient != null && !myClient.isCancelled())
+            myClient.cancel(true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(myClient != null && !myClient.isCancelled())
+            myClient.cancel(true);
     }
 
     public void connectBtnListener(View view){

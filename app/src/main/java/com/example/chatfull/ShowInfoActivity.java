@@ -12,18 +12,15 @@ import java.util.Enumeration;
 
 public class ShowInfoActivity extends AppCompatActivity {
 
-    static final int selfPort = 8080;
-    Server myServer;
-    boolean paused = false;
+    private static final int selfPort = 8080;
+    private Server myServer;
 
-    public void setConnected(boolean connected) {
-        this.connected = connected;
+    public void setConnected(User user){
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-        intent.putExtra("user",myServer.user);
+        intent.putExtra("user", user);
         startActivity(intent);
     }
 
-    public boolean connected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,35 +30,39 @@ public class ShowInfoActivity extends AppCompatActivity {
         TextView ipView = findViewById(R.id.ipDisplay);
         TextView portView = findViewById(R.id.portDisplay);
 
-        String ipport = getSelfIpAddress();
-        ipView.setText(ipport);
-
-        portView.setText(""+ selfPort);
-
-        myServer = new Server(this, getSelfIpAddress(), getSelfPort());
-        Log.e("ShowActivity","CreatedServer");
+        String ip_address = getSelfIpAddress();
+        ipView.setText(ip_address);
+        portView.setText(Integer.toString(selfPort));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(paused) {
+        if(myServer != null)
             myServer.onDestroy();
-            recreate();
-        }
+        myServer = new Server(this, getSelfIpAddress(), getSelfPort());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        paused = true;
+        if(myServer != null)
+            myServer.onDestroy();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(myServer != null)
+            myServer.onDestroy();
     }
 
     public static int getSelfPort() {
         return selfPort;
     }
 
-    static public String getSelfIpAddress() {
+    // Returns device IP Address
+    public static String getSelfIpAddress() {
         String self_ip = "";
         try {
             Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
@@ -83,7 +84,7 @@ public class ShowInfoActivity extends AppCompatActivity {
 
         } catch (SocketException e) {
             e.printStackTrace();
-            Log.e("in_get_ip","IP NOT FOUND");
+            Log.e("GET_IP","IP NOT FOUND");
         }
         return self_ip;
     }

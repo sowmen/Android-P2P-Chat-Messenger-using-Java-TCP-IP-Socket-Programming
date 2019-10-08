@@ -9,11 +9,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class MessageReceiveServer{
-    String ip_address;
-    int port;
+    private String ip_address;
+    private int port;
     ChatActivity activity;
-    ServerSocket serverSocket;
-    boolean stop = false;
+    private ServerSocket serverSocket;
+    private boolean stop = false;
 
     MessageReceiveServer(String ip_address, int port, ChatActivity activity){
         this.ip_address = ip_address;
@@ -31,14 +31,15 @@ public class MessageReceiveServer{
                 serverSocket = new ServerSocket(port);
                 while (stop == false) {
                     Socket received_userSocket = serverSocket.accept();
-                    Log.e("Receive","Connected");
+                    Log.e("RECEIVE","Connected");
 
                     try {
                         BufferedReader input = new BufferedReader(new InputStreamReader(received_userSocket.getInputStream()));
                         String message;
                         message = input.readLine();
-                        Log.e("Receive",message);
+                        Log.e("RECEIVE","RECEIVED ==>" + message);
                         activity.setMessage(message);
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

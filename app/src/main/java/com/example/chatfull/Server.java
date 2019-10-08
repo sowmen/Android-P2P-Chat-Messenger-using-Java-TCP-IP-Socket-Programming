@@ -12,11 +12,11 @@ import java.net.Socket;
 
 public class Server {
     ShowInfoActivity activity;
-    ServerSocket serverSocket;
-    String self_ip_address;
-    int self_port;
-    public User user;
-    boolean stop = false;
+    private ServerSocket serverSocket;
+    private String self_ip_address;
+    private int self_port;
+    User user;
+    private boolean stop = false;
 
     public Server(ShowInfoActivity activity, String self_ip_address, int self_port) {
         this.activity = activity;
@@ -35,36 +35,45 @@ public class Server {
                 serverSocket = new ServerSocket(self_port);
 
                 while (stop == false) {
-                    // block the call until connection is created and return
-                    // Socket object
-                    Log.e("Server","InsideServer");
-                    Socket received_userSocket = serverSocket.accept();
-                    Log.e("Server","Connected");
 
+                    // block the call until connection is created and return Socket object
+                    Log.e("SERVER","WAITING");
+                    Socket received_userSocket = serverSocket.accept();
+                    Log.e("SERVER","CONNECTED");
+
+                    //Receive user credentials
                     BufferedReader input = new BufferedReader(new InputStreamReader(received_userSocket.getInputStream()));
-                    String client_cred = input.readLine();
+                    final String client_cred = input.readLine();
+
+                    Log.e("SERVER", client_cred);
+                    if(client_cred.equalsIgnoreCase("OFFLINE"))
+                        continue;
+
                     String client_ip = client_cred.substring(0,client_cred.indexOf(':'));
                     String client_port = client_cred.substring(client_cred.indexOf(':')+1);
 
                     user = new User(client_ip,Integer.parseInt(client_port));
-//                    MainActivity.userArrayList.add(user);
+                    //MainActivity.userArrayList.add(user);
 
-                    final String selfMsg = received_userSocket.getInetAddress().toString() +":"+ received_userSocket.getPort();
-
+                    //---Testing Connection with response. Optional---
                     try {
                         String response_message = self_ip_address + ":" + self_port;
                         PrintWriter out = new PrintWriter(received_userSocket.getOutputStream(),true);
                         out.println(response_message);
 
                     } catch (IOException e) {
+                        Log.e("INSIDE SERVER", "Could Not Send Self Credentials");
                         e.printStackTrace();
                     }
+                    //----------------------------------------------//
 
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(activity.getApplicationContext(), "Connected to: "+selfMsg ,Toast.LENGTH_SHORT).show();
-                            activity.setConnected(true);
+                            Toast.makeText(activity.getApplicationContext(), "Connected To: "+ client_cred, Toast.LENGTH_LONG).show();
+
+                            //Move to next activity from main thread
+                            activity.setConnected(user);
                         }
                     });
 
@@ -81,10 +90,12 @@ public class Server {
     void onDestroy(){
         if (serverSocket != null) {
             try {
-                Log.e("Server","Close Server");
+                Log.e("SERVER","Closing Server");
                 serverSocket.close();
                 stop = true;
+                Thread.interrupted();
             } catch (IOException e) {
+                Log.e("SERVER", "Could Not Close Server");
                 e.printStackTrace();
             }
         }

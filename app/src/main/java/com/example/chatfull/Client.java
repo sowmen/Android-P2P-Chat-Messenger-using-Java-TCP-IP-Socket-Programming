@@ -12,47 +12,53 @@ import java.net.Socket;
 
 public class Client extends AsyncTask<Void, Void, String> {
 
-    ConnectToUserActivity connectToUserActivity;
-    String dstAddress, serverResponse = "";
-    int dstPort;
-    Socket clientSocket = null;
-    public User user;
+    ConnectToUserActivity activity;
+    private String dstAddress, serverResponse = "";
+    private int dstPort;
+    private Socket clientSocket = null;
+    User user;
 
-    Client(String addr, int port, ConnectToUserActivity connectToUserActivity) {
-        this.dstAddress = addr;
-        this.dstPort = port;
-        this.connectToUserActivity = connectToUserActivity;
+    Client(String dstAddress, int dstPort, ConnectToUserActivity activity) {
+        this.dstAddress = dstAddress;
+        this.dstPort = dstPort;
+        this.activity = activity;
     }
 
     @Override
     protected String doInBackground(Void... arg0) {
         try {
-            Log.e("Client","Before");
+            Log.e("CLIENT","Before Connection");
             clientSocket = new Socket(dstAddress, dstPort);
+
             if(clientSocket != null) {
 
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),true);
                 out.println(ShowInfoActivity.getSelfIpAddress()+":"+ShowInfoActivity.getSelfPort());
 
-                Log.e("Client","After");
+                Log.e("CLIENT","After Connection");
                 user = new User(dstAddress, dstPort);
-                connectToUserActivity.setUser(user);
-//                MainActivity.userArrayList.add(user);
+                activity.setUser(user);
+                //MainActivity.userArrayList.add(user);
             }
 
-            BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            serverResponse = input.readLine();
+            try {
+                BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                serverResponse = input.readLine();
+            }catch (IOException e){
+                e.printStackTrace();
+                Log.e("CLIENT","Could not read socket");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
-            serverResponse = "UnknownHostException: " + e.toString();
+            serverResponse = e.getCause().toString();
         }
         finally {
-            System.out.println("Final");
             if (clientSocket != null) {
                 try {
                     clientSocket.close();
                 } catch (IOException e) {
+                    Log.e("CLIENT", "Could Not Close Client");
                     e.printStackTrace();
                 }
             }
@@ -62,13 +68,12 @@ public class Client extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        connectToUserActivity.runOnUiThread(new Runnable() {
+        activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(connectToUserActivity.getApplicationContext(),serverResponse,Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity.getApplicationContext(), serverResponse, Toast.LENGTH_LONG).show();
             }
         });
         super.onPostExecute(result);
     }
-
 }
