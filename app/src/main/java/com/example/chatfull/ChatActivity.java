@@ -8,39 +8,55 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class ChatActivity extends AppCompatActivity {
+import com.stfalcon.chatkit.messages.MessageInput;
+import com.stfalcon.chatkit.messages.MessagesList;
+import com.stfalcon.chatkit.messages.MessagesListAdapter;
 
-    private TextView messageDisplay;
-    private String clientMsg = null;
-    private EditText msgInput;
+import java.util.Calendar;
+
+public class ChatActivity extends AppCompatActivity implements MessageInput.InputListener {
+
     private User user;
     private SendMessage sender;
     private MessageReceiveServer messageReceiveServer;
 
+    MessagesList messagesList;
+    MessageInput input;
+    protected final String senderId = "1";
+    private final User me = new User("1","Sowmen");
+    MessagesListAdapter<Message> adapter;
+    int cnt = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
+        setContentView(R.layout.activity_message_list);
 
         user = (User) getIntent().getSerializableExtra("user");
-
-        messageDisplay = findViewById(R.id.messageDisplay);
-        msgInput = findViewById(R.id.msgInput);
-
-        messageDisplay.setText("Connected to: " + user.getIpAddress() + ":" + user.getPort() + "\n");
-        messageDisplay.append("Self: " + ShowInfoActivity.getSelfIpAddress() + ":" + ShowInfoActivity.getSelfPort());
+        user.setId("0");
+        user.setName("ABAL");
 
         messageReceiveServer = new MessageReceiveServer(ShowInfoActivity.getSelfIpAddress(), ShowInfoActivity.getSelfPort(),this);
+
+        this.messagesList = findViewById(R.id.messagesList);
+        adapter = new MessagesListAdapter<>(senderId, null);
+        messagesList.setAdapter(adapter);
+
+        input = findViewById(R.id.input);
+        input.setInputListener(this);
     }
 
-    public void OnMsgSendBtnClick(View view){
-        clientMsg = msgInput.getText().toString();
-        msgInput.setText("");
-        messageDisplay.append("\nSent===>" + clientMsg);
 
-        sender = new SendMessage(user.getIpAddress(), user.getPort(),clientMsg,this);
+    @Override
+    public boolean onSubmit(CharSequence input) {
+        Message message = new Message(Integer.toString(++cnt), me, input.toString(), Calendar.getInstance().getTime());
+        adapter.addToStart(message, true);
+
+        sender = new SendMessage(user.getIpAddress(), user.getPort(), input.toString(),this);
         sender.execute();
+        return true;
     }
+
     public void stopSender(){
         if(sender != null)
             sender.cancel(true);
@@ -56,10 +72,13 @@ public class ChatActivity extends AppCompatActivity {
             this.finish();
             return;
         }
+
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                messageDisplay.append("\nReceived===>" + msg);
+                Message message = new Message(Integer.toString(++cnt), user, msg, Calendar.getInstance().getTime());
+                adapter.addToStart(message, true);
             }
         });
     }
@@ -67,13 +86,6 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Log.e("CHAT_ACTIVITY","DESTROY");
-        sender = new SendMessage(user.getIpAddress(), user.getPort(), "OFFLINE",this);
-        sender.execute();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         if(sender != null)
             sender.cancel(true);
         if(messageReceiveServer != null)
@@ -84,6 +96,13 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         Log.e("CHAT_ACTIVITY", "PAUSE");
+        sender = new SendMessage(user.getIpAddress(), user.getPort(), "OFFLINE",this);
+        sender.execute();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         super.onPause();
         if(sender != null && !sender.isCancelled())
             sender.cancel(true);

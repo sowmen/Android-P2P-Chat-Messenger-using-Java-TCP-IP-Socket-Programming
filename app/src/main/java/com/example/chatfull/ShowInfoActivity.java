@@ -38,21 +38,15 @@ public class ShowInfoActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(myServer != null)
-            myServer.onDestroy();
+//        if(myServer != null)
+//            myServer.onDestroy();
+
         myServer = new Server(this, getSelfIpAddress(), getSelfPort());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if(myServer != null)
-            myServer.onDestroy();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
         if(myServer != null)
             myServer.onDestroy();
     }
