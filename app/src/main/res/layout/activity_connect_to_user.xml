@@ -25,7 +25,9 @@
         <EditText
             android:id="@+id/ipInput"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="number|textWebEditText"
+            android:numeric="integer"/>
 
     </LinearLayout>
 
@@ -47,7 +49,9 @@
         <EditText
             android:id="@+id/portInput"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="number|textWebEditText"
+            android:numeric="integer"/>
     </LinearLayout>
 
     <Button

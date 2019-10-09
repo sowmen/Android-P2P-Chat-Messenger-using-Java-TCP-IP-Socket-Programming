@@ -4,6 +4,7 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.1"
     defaultConfig {
+        android.defaultConfig.vectorDrawables.useSupportLibrary = true
         applicationId "com.example.chatfull"
         minSdkVersion 21
         targetSdkVersion 29
@@ -36,4 +37,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0-beta04'
     implementation 'com.github.stfalcon:chatkit:0.3.3'
     implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'androidx.media:media:1.1.0'
+    implementation 'com.android.support:support-media-compat:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
 }
