@@ -10,4 +10,28 @@
     <color name="colorTextInfo">#9b9b9b</color>
     <color name="colorGreen">#A5DE40</color>
     <color name="navColor">#80FFFFFF</color>
+
+    <array name="colors">
+        <item name="red">#F6402C</item>
+        <item name="pink">#EB1460</item>
+        <item name="purple">#9C1AB1</item>
+        <item name="deep_purple">#6633B9</item>
+        <item name="indigo">#3D4DB7</item>
+        <item name="blue">#1093F5</item>
+        <item name="light_blue">#00A6F6</item>
+        <item name="cyan">#00BBD5</item>
+        <item name="teal">#009687</item>
+        <item name="green">#46AF4A</item>
+        <item name="light_green">#88C440</item>
+        <item name="lime">#CCDD1E</item>
+        <item name="yellow">#FFEC16</item>
+        <item name="amber">#FFC100</item>
+        <item name="orange">#FF9800</item>
+        <item name="deep_orange">#FF5505</item>
+        <item name="brown">#7A5547</item>
+        <item name="grey">#9D9D9D</item>
+        <item name="blue_grey">#5E7C8B</item>
+        <item name="white">#FFFFFF</item>
+    </array>
+
 </resources>
