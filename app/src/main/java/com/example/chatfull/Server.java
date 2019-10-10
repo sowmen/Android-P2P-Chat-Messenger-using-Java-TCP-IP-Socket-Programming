@@ -44,9 +44,7 @@ public class Server {
                     //Receive user credentials
                     BufferedReader input = new BufferedReader(new InputStreamReader(received_userSocket.getInputStream()));
                     final String client_cred = input.readLine();
-
-                    Log.e("SERVER", client_cred);
-                    if(client_cred.equalsIgnoreCase("OFFLINE"))
+                    if(client_cred == null)
                         continue;
 
                     String client_ip = client_cred.substring(0,client_cred.indexOf(':'));

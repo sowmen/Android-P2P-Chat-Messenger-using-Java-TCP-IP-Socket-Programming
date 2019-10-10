@@ -22,26 +22,6 @@ public class Message implements IMessage, Serializable, MessageContentType.Image
     private String filename;
     private byte[] file;
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    private boolean isImage;
-    private boolean isFile;
-    public boolean isFile() {
-        return isFile;
-    }
-
-    public void setIsFile(boolean file) {
-        isFile = file;
-    }
-
-
-
     public Message(String id, User user, String text) {
         this(id, user, text, new Date());
     }
@@ -51,8 +31,32 @@ public class Message implements IMessage, Serializable, MessageContentType.Image
         this.text = text;
         this.user = user;
         this.createdAt = createdAt;
+        this.isFile = false;
+        this.isColor = false;
+        this.isImage = false;
     }
 
+    boolean offline;
+    public boolean isOffline() { return offline; }
+    public void setOffline(boolean offline) { this.offline = offline; }
+
+    private boolean isImage;
+    private boolean isFile;
+    public boolean isFile() { return isFile; }
+    public void setIsFile(boolean file) { isFile = file; }
+
+    private int color;
+    private boolean isColor;
+    public int getColor() { return color; }
+    public void setColor(int color) { this.color = color; }
+    public boolean isColor() { return isColor; }
+    public void setIsColor(boolean color) { isColor = color; }
+
+
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     @Override
     public String getId() {

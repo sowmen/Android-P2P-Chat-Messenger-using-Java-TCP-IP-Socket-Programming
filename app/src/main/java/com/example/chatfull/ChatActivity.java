@@ -61,6 +61,7 @@ public class ChatActivity extends AppCompatActivity
 
     ColorPickerDialog colorPickerDialog;
     RelativeLayout back_view;
+    int[] colors;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +115,7 @@ public class ChatActivity extends AppCompatActivity
         //Initialize color picker
         back_view = findViewById(R.id.background_view);
         TypedArray ta = getApplicationContext().getResources().obtainTypedArray(R.array.colors);
-        int[] colors = new int[ta.length()];
+        colors = new int[ta.length()];
         for (int i = 0; i < ta.length(); i++) {
             colors[i] = ta.getColor(i, 0);
         }
@@ -147,6 +148,13 @@ public class ChatActivity extends AppCompatActivity
 
     @Override
     public void onColorSelected(int color) {
+        Message message = new Message(Integer.toString(++cnt), me, null, Calendar.getInstance().getTime());
+        message.setColor(color);
+        message.setIsColor(true);
+
+        sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
+        sender.execute();
+
         back_view.setBackgroundColor(color);
     }
 
@@ -200,7 +208,6 @@ public class ChatActivity extends AppCompatActivity
                 adapter.addToStart(message, true);
                 sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
                 sender.execute();
-                Toast.makeText(this, file.getPath() + "FILE", Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == PICK_IMAGE_REQUEST && data != null) {
             if (resultCode == RESULT_OK) {
@@ -219,7 +226,6 @@ public class ChatActivity extends AppCompatActivity
                 adapter.addToStart(message, true);
                 sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
                 sender.execute();
-//                Toast.makeText(this, file.getPath() + "IMAGE", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -302,7 +308,7 @@ public class ChatActivity extends AppCompatActivity
 
     public void setMessage(final Message msg) {
         Log.e("IN_SET", msg.toString());
-        if (msg.getText() != null && msg.getText().equalsIgnoreCase("OFFLINE")) {
+        if (msg.isOffline()) {
             if (sender != null)
                 sender.cancel(true);
             if (messageReceiveServer != null)
@@ -310,7 +316,6 @@ public class ChatActivity extends AppCompatActivity
             this.finish();
             return;
         }
-
 
         runOnUiThread(new Runnable() {
             @Override
@@ -324,6 +329,8 @@ public class ChatActivity extends AppCompatActivity
                 } else if(msg.isFile()) {
                     msg.setUser(user);
                     adapter.addToStart(msg, true);
+                } else if(msg.isColor()) {
+                    back_view.setBackgroundColor(msg.getColor());
                 }
             }
         });
@@ -342,7 +349,9 @@ public class ChatActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         Log.e("CHAT_ACTIVITY", "PAUSE");
-        sender = new SendMessage(user.getIpAddress(), user.getPort(), new Message(Integer.toString(++cnt), me, "OFFLINE"), this);
+        Message message = new Message(Integer.toString(++cnt), me, null);
+        message.setOffline(true);
+        sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
         sender.execute();
         try {
             Thread.sleep(500);
@@ -357,6 +366,7 @@ public class ChatActivity extends AppCompatActivity
 
     }
 
+    //Used for file messages
     @Override
     public boolean hasContentFor(Message message, byte type) {
         switch (type) {
