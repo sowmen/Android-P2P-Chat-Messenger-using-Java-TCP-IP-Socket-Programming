@@ -13,7 +13,7 @@ import com.stfalcon.chatkit.commons.models.MessageContentType;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Message implements IMessage, Serializable, MessageContentType.Image {
+public class Message implements IMessage, Serializable, MessageContentType.Image, MessageContentType {
 
     private String id, text;
     private User user;
@@ -31,6 +31,16 @@ public class Message implements IMessage, Serializable, MessageContentType.Image
     }
 
     private boolean isImage;
+    private boolean isFile;
+    public boolean isFile() {
+        return isFile;
+    }
+
+    public void setIsFile(boolean file) {
+        isFile = file;
+    }
+
+
 
     public Message(String id, User user, String text) {
         this(id, user, text, new Date());

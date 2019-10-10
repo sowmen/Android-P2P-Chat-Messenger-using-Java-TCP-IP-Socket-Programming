@@ -28,6 +28,7 @@ import com.android.colorpicker.ColorPickerDialog;
 import com.android.colorpicker.ColorPickerSwatch;
 import com.bumptech.glide.Glide;
 import com.stfalcon.chatkit.commons.ImageLoader;
+import com.stfalcon.chatkit.messages.MessageHolders;
 import com.stfalcon.chatkit.messages.MessagesList;
 import com.stfalcon.chatkit.messages.MessagesListAdapter;
 
@@ -36,10 +37,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 
-public class ChatActivity extends AppCompatActivity implements ColorPickerSwatch.OnColorSelectedListener {
+public class ChatActivity extends AppCompatActivity
+        implements ColorPickerSwatch.OnColorSelectedListener,
+        MessageHolders.ContentChecker<Message> {
 
     private static final int PICK_FILE_REQUEST = 1;
     private static final int PICK_IMAGE_REQUEST = 2;
+    private static final byte CONTENT_TYPE_FILE = 1;
 
     private User user;
     private SendMessage sender;
@@ -91,7 +95,15 @@ public class ChatActivity extends AppCompatActivity implements ColorPickerSwatch
                         .into(imageView);
             }
         };
-        adapter = new MessagesListAdapter<>(senderId, imageLoader);
+        MessageHolders holders = new MessageHolders()
+                .registerContentType(
+                        CONTENT_TYPE_FILE,
+                        IncomingFileMessageViewHolder.class,
+                        R.layout.custom_incoming_file_layout,
+                        OutcomingFileMessageViewHolder.class,
+                        R.layout.custom_outcoming_file_layout,
+                        this);
+        adapter = new MessagesListAdapter<>(senderId, holders, imageLoader);
         messagesList.setAdapter(adapter);
 
         input = findViewById(R.id.et_message);
@@ -174,6 +186,20 @@ public class ChatActivity extends AppCompatActivity implements ColorPickerSwatch
         if (requestCode == PICK_FILE_REQUEST && data != null) {
             if (resultCode == RESULT_OK) {
                 Uri file = data.getData();
+                Message message = new Message(Integer.toString(++cnt), me, null, Calendar.getInstance().getTime());
+                message.setFilename(getFileName(file));
+                try {
+                    message.setFile(getBytes(this, file));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e("SEND_IMAGE", "COULD NOT CONVERT TO BYTE");
+                }
+                message.setIsImage(false);
+                message.setIsFile(true);
+
+                adapter.addToStart(message, true);
+                sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
+                sender.execute();
                 Toast.makeText(this, file.getPath() + "FILE", Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == PICK_IMAGE_REQUEST && data != null) {
@@ -188,6 +214,7 @@ public class ChatActivity extends AppCompatActivity implements ColorPickerSwatch
                     Log.e("SEND_IMAGE", "COULD NOT CONVERT TO BYTE");
                 }
                 message.setIsImage(true);
+                message.setIsFile(false);
 
                 adapter.addToStart(message, true);
                 sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
@@ -294,6 +321,9 @@ public class ChatActivity extends AppCompatActivity implements ColorPickerSwatch
                 } else if (msg.isImage()) {
                     msg.setUser(user);
                     adapter.addToStart(msg, true);
+                } else if(msg.isFile()) {
+                    msg.setUser(user);
+                    adapter.addToStart(msg, true);
                 }
             }
         });
@@ -327,4 +357,14 @@ public class ChatActivity extends AppCompatActivity implements ColorPickerSwatch
 
     }
 
+    @Override
+    public boolean hasContentFor(Message message, byte type) {
+        switch (type) {
+            case CONTENT_TYPE_FILE:
+                return message.getFile() != null
+                        && message.getText() == null
+                        && message.isFile();
+        }
+        return false;
+    }
 }
