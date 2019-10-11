@@ -92,7 +92,11 @@ public class ConnectToUserActivity extends AppCompatActivity {
 
         if (requestCode == BARCODE_READER_ACTIVITY_REQUEST && data != null) {
             Barcode barcode = data.getParcelableExtra(BarcodeReaderActivity.KEY_CAPTURED_BARCODE);
-            Toast.makeText(this, barcode.rawValue, Toast.LENGTH_SHORT).show();
+            String client_ip = barcode.rawValue.substring(0, barcode.rawValue.indexOf(':'));
+            String client_port = barcode.rawValue.substring(barcode.rawValue.indexOf(':') + 1);
+
+            ipInput.setText(client_ip);
+            portInput.setText(client_port);
         }
 
     }
