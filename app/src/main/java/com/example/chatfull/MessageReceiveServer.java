@@ -9,14 +9,14 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class MessageReceiveServer{
+public class MessageReceiveServer {
     private String ip_address;
     private int port;
     ChatActivity activity;
     private ServerSocket serverSocket;
     private boolean stop = false;
 
-    MessageReceiveServer(String ip_address, int port, ChatActivity activity){
+    MessageReceiveServer(String ip_address, int port, ChatActivity activity) {
         this.ip_address = ip_address;
         this.port = port;
         this.activity = activity;
@@ -32,13 +32,13 @@ public class MessageReceiveServer{
                 serverSocket = new ServerSocket(port);
                 while (stop == false) {
                     Socket received_userSocket = serverSocket.accept();
-                    Log.e("RECEIVE","Connected");
+                    Log.e("RECEIVE", "Connected");
 
                     try {
                         ObjectInputStream in = new ObjectInputStream(received_userSocket.getInputStream());
                         Message message = (Message) in.readObject();
 
-                        Log.e("RECEIVE","RECEIVED ==>" + message);
+                        Log.e("RECEIVE", "RECEIVED ==>" + message);
                         activity.setMessage(message);
 
                     } catch (IOException e) {
@@ -54,8 +54,8 @@ public class MessageReceiveServer{
         }
     }
 
-    public void onDestroy(){
-        if(serverSocket != null){
+    public void onDestroy() {
+        if (serverSocket != null) {
             try {
                 serverSocket.close();
                 stop = true;

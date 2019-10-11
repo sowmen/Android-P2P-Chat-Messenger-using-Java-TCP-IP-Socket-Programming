@@ -1,1 +1,1 @@
-include ':app', ':colorpicker'
+include ':app', ':colorpicker', ':barcode-reader'

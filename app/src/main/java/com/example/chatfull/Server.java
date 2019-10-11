@@ -37,26 +37,26 @@ public class Server {
                 while (stop == false) {
 
                     // block the call until connection is created and return Socket object
-                    Log.e("SERVER","WAITING");
+                    Log.e("SERVER", "WAITING");
                     Socket received_userSocket = serverSocket.accept();
-                    Log.e("SERVER","CONNECTED");
+                    Log.e("SERVER", "CONNECTED");
 
                     //Receive user credentials
                     BufferedReader input = new BufferedReader(new InputStreamReader(received_userSocket.getInputStream()));
                     final String client_cred = input.readLine();
-                    if(client_cred == null)
+                    if (client_cred == null)
                         continue;
 
-                    String client_ip = client_cred.substring(0,client_cred.indexOf(':'));
-                    String client_port = client_cred.substring(client_cred.indexOf(':')+1);
+                    String client_ip = client_cred.substring(0, client_cred.indexOf(':'));
+                    String client_port = client_cred.substring(client_cred.indexOf(':') + 1);
 
-                    user = new User(client_ip,Integer.parseInt(client_port));
+                    user = new User(client_ip, Integer.parseInt(client_port));
                     //MainActivity.userArrayList.add(user);
 
                     //---Testing Connection with response. Optional---
                     try {
                         String response_message = self_ip_address + ":" + self_port;
-                        PrintWriter out = new PrintWriter(received_userSocket.getOutputStream(),true);
+                        PrintWriter out = new PrintWriter(received_userSocket.getOutputStream(), true);
                         out.println(response_message);
 
                     } catch (IOException e) {
@@ -68,7 +68,7 @@ public class Server {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(activity.getApplicationContext(), "Connected To: "+ client_cred, Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity.getApplicationContext(), "Connected To: " + client_cred, Toast.LENGTH_LONG).show();
 
                             //Move to next activity from main thread
                             activity.setConnected(user);
@@ -85,10 +85,10 @@ public class Server {
         }
     }
 
-    void onDestroy(){
+    void onDestroy() {
         if (serverSocket != null) {
             try {
-                Log.e("SERVER","Closing Server");
+                Log.e("SERVER", "Closing Server");
                 serverSocket.close();
                 stop = true;
                 Thread.interrupted();

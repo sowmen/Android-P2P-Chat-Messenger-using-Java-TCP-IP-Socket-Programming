@@ -13,88 +13,94 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <RelativeLayout
+        android:id="@+id/background_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/rl_bottom"
-        android:layout_below="@+id/toolbar"
-        android:id="@+id/background_view">
+        android:layout_below="@+id/toolbar">
+
         <com.stfalcon.chatkit.messages.MessagesList
             android:id="@+id/messagesList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:textAutoLink="all"
             app:incomingDefaultBubbleColor="#e0e0e0"
             app:incomingDefaultBubblePressedColor="#aeaeae"
-            app:outcomingDefaultBubblePressedColor="#303F9F"
+            app:incomingTextLinkColor="#6D4C41"
             app:outcomingDefaultBubbleColor="#3F51B5"
+            app:outcomingDefaultBubblePressedColor="#303F9F"
             app:outcomingTextLinkColor="#ff8a80"
-            app:incomingTextLinkColor="#6D4C41"/>
+            app:textAutoLink="all" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/rl_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/space10"
-        android:paddingRight="@dimen/space5"
-        android:paddingTop="7dp"
-        android:paddingBottom="7dp"
-        android:background="#E9EDED"
         android:layout_alignParentBottom="true"
+        android:background="#E9EDED"
         android:focusable="true"
-        android:focusableInTouchMode="true">
+        android:focusableInTouchMode="true"
+        android:paddingLeft="@dimen/space10"
+        android:paddingTop="7dp"
+        android:paddingRight="@dimen/space5"
+        android:paddingBottom="7dp">
+
         <Button
             android:id="@+id/bt_send"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:background="@drawable/btn_grey"
             android:gravity="center"
+            android:onClick="onBtnSendClick"
+            android:stateListAnimator="@null"
             android:text="Send"
             android:textColor="@color/colorAccent"
-            android:textSize="@dimen/h3"
-            android:background="@drawable/btn_grey"
-            android:layout_alignParentRight="true"
-            android:stateListAnimator="@null"
-            android:layout_centerInParent="true"
-            android:onClick="onBtnSendClick"/>
+            android:textSize="@dimen/h3" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/bt_send"
-            android:background="@drawable/bg_white_rounded"
-            android:layout_centerVertical="true">
+            android:background="@drawable/bg_white_rounded">
+
             <ImageButton
                 android:id="@+id/bt_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/bt_attachment"
-                app:srcCompat="@drawable/outline_image_24"
-                android:padding="@dimen/space10"
-                android:background="@android:color/transparent"
                 android:layout_centerVertical="true"
-                android:onClick="onBtnImageClick"/>
+                android:layout_toLeftOf="@id/bt_attachment"
+                android:background="@android:color/transparent"
+                android:onClick="onBtnImageClick"
+                android:padding="@dimen/space10"
+                app:srcCompat="@drawable/outline_image_24" />
+
             <ImageButton
                 android:id="@+id/bt_attachment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/outline_attachment_24"
-                android:padding="@dimen/space10"
                 android:layout_alignParentRight="true"
-                android:background="@android:color/transparent"
                 android:layout_centerVertical="true"
-                android:onClick="onBtnAttachmentClick"/>
+                android:background="@android:color/transparent"
+                android:onClick="onBtnAttachmentClick"
+                android:padding="@dimen/space10"
+                app:srcCompat="@drawable/outline_attachment_24" />
+
             <EditText
                 android:id="@+id/et_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@id/bt_image"
-                android:padding="@dimen/space15"
+                android:background="@android:color/transparent"
                 android:hint="Enter your message"
+                android:inputType="textAutoCorrect|textAutoComplete|textMultiLine|textCapSentences"
                 android:maxLines="3"
-                android:textSize="@dimen/h3"
+                android:padding="@dimen/space15"
                 android:textColor="@color/colorTextBlack"
                 android:textColorHint="@color/colorTextHint"
-                android:background="@android:color/transparent"
-                android:inputType="textAutoCorrect|textAutoComplete|textMultiLine|textCapSentences"/>
+                android:textSize="@dimen/h3" />
         </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>

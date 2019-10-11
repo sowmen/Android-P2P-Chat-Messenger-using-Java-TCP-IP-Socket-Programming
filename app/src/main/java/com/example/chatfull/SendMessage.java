@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 public class SendMessage extends AsyncTask<Void, Void, String> {
@@ -26,18 +25,18 @@ public class SendMessage extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... arg0) {
         try {
             clientSocket = new Socket(dstAddress, dstPort);
-            Log.e("SEND_MSG","Connected, Sending: " + message.getText());
+            Log.e("SEND_MSG", "Connected, Sending: " + message.getText());
 
-            if(clientSocket != null) {
+            if (clientSocket != null) {
                 ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
                 out.writeObject(message);
                 out.flush();
 
-                Log.e("SEND_MSG","DONE: " + message.getText());
+                Log.e("SEND_MSG", "DONE: " + message.getText());
                 activity.stopSender();
             }
         } catch (Exception e) {
-            Log.e("SEND_MSG","ConnectHoyNai "+ message.getText());
+            Log.e("SEND_MSG", "ConnectHoyNai " + message.getText());
             e.printStackTrace();
         }
         return null;

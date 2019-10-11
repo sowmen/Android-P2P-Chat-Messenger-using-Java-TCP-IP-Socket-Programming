@@ -27,15 +27,15 @@ public class Client extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... arg0) {
         try {
-            Log.e("CLIENT","Before Connection");
+            Log.e("CLIENT", "Before Connection");
             clientSocket = new Socket(dstAddress, dstPort);
 
-            if(clientSocket != null) {
+            if (clientSocket != null) {
 
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),true);
-                out.println(ShowInfoActivity.getSelfIpAddress()+":"+ShowInfoActivity.getSelfPort());
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                out.println(ShowInfoActivity.getSelfIpAddress() + ":" + ShowInfoActivity.getSelfPort());
 
-                Log.e("CLIENT","After Connection");
+                Log.e("CLIENT", "After Connection");
                 user = new User(dstAddress, dstPort);
                 activity.setUser(user);
                 //MainActivity.userArrayList.add(user);
@@ -44,16 +44,15 @@ public class Client extends AsyncTask<Void, Void, String> {
             try {
                 BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 serverResponse = input.readLine();
-            }catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
-                Log.e("CLIENT","Could not read socket");
+                Log.e("CLIENT", "Could not read socket");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             serverResponse = e.getCause().toString();
-        }
-        finally {
+        } finally {
             if (clientSocket != null) {
                 try {
                     clientSocket.close();

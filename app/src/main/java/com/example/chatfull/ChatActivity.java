@@ -30,7 +30,6 @@ import com.android.colorpicker.ColorPickerDialog;
 import com.android.colorpicker.ColorPickerSwatch;
 import com.bumptech.glide.Glide;
 import com.stfalcon.chatkit.commons.ImageLoader;
-import com.stfalcon.chatkit.commons.models.IMessage;
 import com.stfalcon.chatkit.messages.MessageHolders;
 import com.stfalcon.chatkit.messages.MessagesList;
 import com.stfalcon.chatkit.messages.MessagesListAdapter;
@@ -40,7 +39,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 
 public class ChatActivity extends AppCompatActivity
@@ -135,7 +133,7 @@ public class ChatActivity extends AppCompatActivity
     }
 
     private void setClipboard(Context context, String text) {
-        if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
             android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             clipboard.setText(text);
         } else {
@@ -291,7 +289,6 @@ public class ChatActivity extends AppCompatActivity
         }
     }
 
-
     /**
      * get bytes from input stream.
      *
@@ -345,10 +342,10 @@ public class ChatActivity extends AppCompatActivity
                 } else if (msg.isImage()) {
                     msg.setUser(user);
                     adapter.addToStart(msg, true);
-                } else if(msg.isFile()) {
+                } else if (msg.isFile()) {
                     msg.setUser(user);
                     adapter.addToStart(msg, true);
-                } else if(msg.isColor()) {
+                } else if (msg.isColor()) {
                     back_view.setBackgroundColor(msg.getColor());
                 }
             }
@@ -399,17 +396,17 @@ public class ChatActivity extends AppCompatActivity
 
     @Override
     public void onMessageLongClick(Message message) {
-        Log.e("CLICK","MSG CLICK");
-        if(message.getText() != null){
-            setClipboard(getApplicationContext(),message.getText());
-            Toast.makeText(getApplicationContext(),"Text Copied",Toast.LENGTH_SHORT).show();
-        } else if(message.isFile()) {
+        Log.e("CLICK", "MSG CLICK");
+        if (message.getText() != null) {
+            setClipboard(getApplicationContext(), message.getText());
+            Toast.makeText(getApplicationContext(), "Text Copied", Toast.LENGTH_SHORT).show();
+        } else if (message.isFile()) {
             try {
 //                String uriString = new String(message.getFile(),"UTF-8");
 //                Uri downloadUri = Uri.parse(uriString);
 
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),message.getId()+message.getFilename());
-                Log.e("FILE",file.getAbsolutePath());
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), message.getId() + message.getFilename());
+                Log.e("FILE", file.getAbsolutePath());
                 try {
                     file.createNewFile();
                     FileOutputStream fileOuputStream = new FileOutputStream(file);
@@ -418,15 +415,15 @@ public class ChatActivity extends AppCompatActivity
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                String fileType = message.getFilename().substring(message.getFilename().indexOf('.')+1);
+                String fileType = message.getFilename().substring(message.getFilename().indexOf('.') + 1);
                 DownloadManager downloadManager = (DownloadManager) getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
-                downloadManager.addCompletedDownload(message.getId()+message.getFilename(), message.getId()+message.getFilename(), true, (fileType.equalsIgnoreCase("txt") ? "text/*" : "*/*"),file.getAbsolutePath(),file.length(),true);
+                downloadManager.addCompletedDownload(message.getId() + message.getFilename(), message.getId() + message.getFilename(), true, (fileType.equalsIgnoreCase("txt") ? "text/*" : "*/*"), file.getAbsolutePath(), file.length(), true);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if(message.isImage()){
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),message.getId()+message.getFilename());
+        } else if (message.isImage()) {
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), message.getId() + message.getFilename());
             try {
                 file.createNewFile();
                 FileOutputStream fileOuputStream = new FileOutputStream(file);
@@ -436,7 +433,7 @@ public class ChatActivity extends AppCompatActivity
                 e.printStackTrace();
             }
             DownloadManager downloadManager = (DownloadManager) getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
-            downloadManager.addCompletedDownload(message.getId()+message.getFilename(), message.getId()+message.getFilename(), true, "image/*",file.getAbsolutePath(),file.length(),true);
+            downloadManager.addCompletedDownload(message.getId() + message.getFilename(), message.getId() + message.getFilename(), true, "image/*", file.getAbsolutePath(), file.length(), true);
         }
     }
 }

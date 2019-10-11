@@ -1,7 +1,5 @@
 package com.example.chatfull;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.util.Base64;
 
 import androidx.annotation.Nullable;
@@ -37,21 +35,44 @@ public class Message implements IMessage, Serializable, MessageContentType.Image
     }
 
     boolean offline;
-    public boolean isOffline() { return offline; }
-    public void setOffline(boolean offline) { this.offline = offline; }
+
+    public boolean isOffline() {
+        return offline;
+    }
+
+    public void setOffline(boolean offline) {
+        this.offline = offline;
+    }
 
     private boolean isImage;
     private boolean isFile;
-    public boolean isFile() { return isFile; }
-    public void setIsFile(boolean file) { isFile = file; }
+
+    public boolean isFile() {
+        return isFile;
+    }
+
+    public void setIsFile(boolean file) {
+        isFile = file;
+    }
 
     private int color;
     private boolean isColor;
-    public int getColor() { return color; }
-    public void setColor(int color) { this.color = color; }
-    public boolean isColor() { return isColor; }
-    public void setIsColor(boolean color) { isColor = color; }
 
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public boolean isColor() {
+        return isColor;
+    }
+
+    public void setIsColor(boolean color) {
+        isColor = color;
+    }
 
 
     public void setId(String id) {
@@ -80,13 +101,17 @@ public class Message implements IMessage, Serializable, MessageContentType.Image
 
     @Override
     public String toString() {
-        if(filename != null) return filename;
+        if (filename != null) return filename;
         else return id;
     }
 
-    public void setText(String text) { this.text = text; }
+    public void setText(String text) {
+        this.text = text;
+    }
 
-    public void setUser(User user) { this.user = user; }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getFilename() {
         return filename;
@@ -112,12 +137,14 @@ public class Message implements IMessage, Serializable, MessageContentType.Image
         isImage = image;
     }
 
+    //Returns encoded string from the byte[] of image.
+    //Used to show in image view
     @Nullable
     @Override
     public String getImageUrl() {
-        if(isImage == false) return null;
-        else{
-            return Base64.encodeToString(file,Base64.DEFAULT);
+        if (isImage == false) return null;
+        else {
+            return Base64.encodeToString(file, Base64.DEFAULT);
         }
     }
 }

@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -15,7 +17,7 @@ public class ShowInfoActivity extends AppCompatActivity {
     private static final int selfPort = 8080;
     private Server myServer;
 
-    public void setConnected(User user){
+    public void setConnected(User user) {
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         intent.putExtra("user", user);
         startActivity(intent);
@@ -38,16 +40,13 @@ public class ShowInfoActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        if(myServer != null)
-//            myServer.onDestroy();
-
         myServer = new Server(this, getSelfIpAddress(), getSelfPort());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if(myServer != null)
+        if (myServer != null)
             myServer.onDestroy();
     }
 
@@ -78,7 +77,7 @@ public class ShowInfoActivity extends AppCompatActivity {
 
         } catch (SocketException e) {
             e.printStackTrace();
-            Log.e("GET_IP","IP NOT FOUND");
+            Log.e("GET_IP", "IP NOT FOUND");
         }
         return self_ip;
     }
