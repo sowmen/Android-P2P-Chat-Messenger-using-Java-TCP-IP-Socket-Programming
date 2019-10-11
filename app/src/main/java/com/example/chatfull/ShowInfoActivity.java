@@ -1,11 +1,15 @@
 package com.example.chatfull;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import net.glxn.qrgen.android.QRCode;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -35,6 +39,10 @@ public class ShowInfoActivity extends AppCompatActivity {
         String ip_address = getSelfIpAddress();
         ipView.setText(ip_address);
         portView.setText(Integer.toString(selfPort));
+
+        Bitmap myBitmap = QRCode.from(ip_address+":"+selfPort).bitmap();
+        ImageView myImage = (ImageView) findViewById(R.id.qr_view);
+        myImage.setImageBitmap(myBitmap);
     }
 
     @Override
