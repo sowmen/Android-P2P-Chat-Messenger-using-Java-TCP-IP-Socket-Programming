@@ -1,11 +1,13 @@
 package com.example.chatfull;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.util.Base64;
 import android.util.Log;
@@ -28,18 +30,23 @@ import com.android.colorpicker.ColorPickerDialog;
 import com.android.colorpicker.ColorPickerSwatch;
 import com.bumptech.glide.Glide;
 import com.stfalcon.chatkit.commons.ImageLoader;
+import com.stfalcon.chatkit.commons.models.IMessage;
 import com.stfalcon.chatkit.messages.MessageHolders;
 import com.stfalcon.chatkit.messages.MessagesList;
 import com.stfalcon.chatkit.messages.MessagesListAdapter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 
 public class ChatActivity extends AppCompatActivity
         implements ColorPickerSwatch.OnColorSelectedListener,
-        MessageHolders.ContentChecker<Message> {
+        MessageHolders.ContentChecker<Message>,
+        MessagesListAdapter.OnMessageLongClickListener<Message> {
 
     private static final int PICK_FILE_REQUEST = 1;
     private static final int PICK_IMAGE_REQUEST = 2;
@@ -123,6 +130,19 @@ public class ChatActivity extends AppCompatActivity
         colorPickerDialog = new ColorPickerDialog();
         colorPickerDialog.initialize(R.string.color_title, colors, colors[0], 5, colors.length);
         colorPickerDialog.setOnColorSelectedListener(this);
+
+        adapter.setOnMessageLongClickListener(this);
+    }
+
+    private void setClipboard(Context context, String text) {
+        if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+            android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboard.setText(text);
+        } else {
+            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", text);
+            clipboard.setPrimaryClip(clip);
+        }
     }
 
     @Override
@@ -139,7 +159,6 @@ public class ChatActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), "Select All Clicked", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.background_button:
-                Toast.makeText(getApplicationContext(), "BG Clicked", Toast.LENGTH_SHORT).show();
                 colorPickerDialog.show(getFragmentManager(), "COLOR");
                 break;
         }
@@ -321,8 +340,8 @@ public class ChatActivity extends AppCompatActivity
             @Override
             public void run() {
                 if (msg.getText() != null) {
-                    Message message = new Message(Integer.toString(++cnt), user, msg.getText(), Calendar.getInstance().getTime());
-                    adapter.addToStart(message, true);
+                    msg.setUser(user);
+                    adapter.addToStart(msg, true);
                 } else if (msg.isImage()) {
                     msg.setUser(user);
                     adapter.addToStart(msg, true);
@@ -376,5 +395,48 @@ public class ChatActivity extends AppCompatActivity
                         && message.isFile();
         }
         return false;
+    }
+
+    @Override
+    public void onMessageLongClick(Message message) {
+        Log.e("CLICK","MSG CLICK");
+        if(message.getText() != null){
+            setClipboard(getApplicationContext(),message.getText());
+            Toast.makeText(getApplicationContext(),"Text Copied",Toast.LENGTH_SHORT).show();
+        } else if(message.isFile()) {
+            try {
+//                String uriString = new String(message.getFile(),"UTF-8");
+//                Uri downloadUri = Uri.parse(uriString);
+
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),message.getId()+message.getFilename());
+                Log.e("FILE",file.getAbsolutePath());
+                try {
+                    file.createNewFile();
+                    FileOutputStream fileOuputStream = new FileOutputStream(file);
+                    fileOuputStream.write(message.getFile());
+                    fileOuputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String fileType = message.getFilename().substring(message.getFilename().indexOf('.')+1);
+                DownloadManager downloadManager = (DownloadManager) getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
+                downloadManager.addCompletedDownload(message.getId()+message.getFilename(), message.getId()+message.getFilename(), true, (fileType.equalsIgnoreCase("txt") ? "text/*" : "*/*"),file.getAbsolutePath(),file.length(),true);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if(message.isImage()){
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),message.getId()+message.getFilename());
+            try {
+                file.createNewFile();
+                FileOutputStream fileOuputStream = new FileOutputStream(file);
+                fileOuputStream.write(message.getFile());
+                fileOuputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            DownloadManager downloadManager = (DownloadManager) getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
+            downloadManager.addCompletedDownload(message.getId()+message.getFilename(), message.getId()+message.getFilename(), true, "image/*",file.getAbsolutePath(),file.length(),true);
+        }
     }
 }

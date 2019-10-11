@@ -22,7 +22,13 @@
             android:id="@+id/messagesList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            />
+            app:textAutoLink="all"
+            app:incomingDefaultBubbleColor="#e0e0e0"
+            app:incomingDefaultBubblePressedColor="#aeaeae"
+            app:outcomingDefaultBubblePressedColor="#303F9F"
+            app:outcomingDefaultBubbleColor="#3F51B5"
+            app:outcomingTextLinkColor="#ff8a80"
+            app:incomingTextLinkColor="#6D4C41"/>
     </RelativeLayout>
 
     <RelativeLayout
