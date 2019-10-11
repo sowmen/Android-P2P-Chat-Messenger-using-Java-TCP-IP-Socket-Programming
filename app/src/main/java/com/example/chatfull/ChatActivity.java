@@ -2,9 +2,11 @@ package com.example.chatfull;
 
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -26,9 +28,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.android.colorpicker.ColorPickerDialog;
-import com.android.colorpicker.ColorPickerSwatch;
 import com.bumptech.glide.Glide;
+import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
+import com.flask.colorpicker.builder.ColorPickerClickListener;
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import com.stfalcon.chatkit.commons.ImageLoader;
 import com.stfalcon.chatkit.messages.MessageHolders;
 import com.stfalcon.chatkit.messages.MessagesList;
@@ -42,8 +46,7 @@ import java.io.InputStream;
 import java.util.Calendar;
 
 public class ChatActivity extends AppCompatActivity
-        implements ColorPickerSwatch.OnColorSelectedListener,
-        MessageHolders.ContentChecker<Message>,
+        implements MessageHolders.ContentChecker<Message>,
         MessagesListAdapter.OnMessageLongClickListener<Message> {
 
     private static final int PICK_FILE_REQUEST = 1;
@@ -64,7 +67,6 @@ public class ChatActivity extends AppCompatActivity
     ImageButton btnAttachement, btnImage;
     EditText input;
 
-    ColorPickerDialog colorPickerDialog;
     RelativeLayout back_view;
     int[] colors;
 
@@ -125,9 +127,6 @@ public class ChatActivity extends AppCompatActivity
             colors[i] = ta.getColor(i, 0);
         }
         ta.recycle();
-        colorPickerDialog = new ColorPickerDialog();
-        colorPickerDialog.initialize(R.string.color_title, colors, colors[0], 5, colors.length);
-        colorPickerDialog.setOnColorSelectedListener(this);
 
         adapter.setOnMessageLongClickListener(this);
     }
@@ -157,22 +156,40 @@ public class ChatActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), "Select All Clicked", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.background_button:
-                colorPickerDialog.show(getFragmentManager(), "COLOR");
+                ColorPickerDialogBuilder
+                        .with(this)
+                        .setTitle("Choose color")
+                        .initialColor(Color.WHITE)
+                        .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                        .density(12)
+                        .setOnColorSelectedListener(new OnColorSelectedListener() {
+                            @Override
+                            public void onColorSelected(int selectedColor) {
+                                Toast.makeText(getApplicationContext(),"onColorSelected: 0x" + Integer.toHexString(selectedColor),Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setPositiveButton("ok", new ColorPickerClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
+                                Message message = new Message(Integer.toString(++cnt), me, null, Calendar.getInstance().getTime());
+                                message.setColor(selectedColor);
+                                message.setIsColor(true);
+
+                                sender = new SendMessage(user.getIpAddress(), user.getPort(), message, ChatActivity.this);
+                                sender.execute();
+                                back_view.setBackgroundColor(selectedColor);
+                            }
+                        })
+                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .build()
+                        .show();
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onColorSelected(int color) {
-        Message message = new Message(Integer.toString(++cnt), me, null, Calendar.getInstance().getTime());
-        message.setColor(color);
-        message.setIsColor(true);
-
-        sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
-        sender.execute();
-
-        back_view.setBackgroundColor(color);
     }
 
     public void onBtnSendClick(View view) {
