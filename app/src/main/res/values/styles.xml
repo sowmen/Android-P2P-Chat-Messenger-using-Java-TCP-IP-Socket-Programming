@@ -10,6 +10,10 @@
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <!--<item name="popupTheme">@style/PopupTheme</item>-->
     </style>
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:fontFamily">@font/source_sans_regular</item>
+        <item name="android:textSize">20sp</item>
+    </style>
 
     <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>

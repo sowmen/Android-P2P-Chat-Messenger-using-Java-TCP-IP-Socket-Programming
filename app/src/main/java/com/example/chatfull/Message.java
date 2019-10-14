@@ -9,6 +9,7 @@ import com.stfalcon.chatkit.commons.models.IUser;
 import com.stfalcon.chatkit.commons.models.MessageContentType;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Date;
 
 public class Message implements IMessage, Serializable, MessageContentType.Image, MessageContentType {
@@ -33,6 +34,13 @@ public class Message implements IMessage, Serializable, MessageContentType.Image
         this.isColor = false;
         this.isImage = false;
     }
+
+    public static Comparator<Message> DateComparator = new Comparator<Message>() {
+        @Override
+        public int compare(Message message, Message t1) {
+            return t1.getCreatedAt().compareTo(message.getCreatedAt());
+        }
+    };
 
     boolean offline;
 

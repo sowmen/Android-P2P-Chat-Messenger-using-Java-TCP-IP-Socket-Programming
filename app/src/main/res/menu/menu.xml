@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/select_all"
-        android:title="Select All" />
 
     <item
         android:id="@+id/background_button"
-        android:title="Change Background" />
+        android:title="Change Background"
+        android:icon="@drawable/ic_rgb"
+        app:showAsAction="ifRoom"/>
 </menu>

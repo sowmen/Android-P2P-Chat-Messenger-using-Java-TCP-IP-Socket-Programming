@@ -2,105 +2,104 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:id="@+id/background_view">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPurpleLight"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:theme="@style/ToolbarTheme"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <RelativeLayout
-        android:id="@+id/background_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/rl_bottom"
-        android:layout_below="@+id/toolbar">
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@id/bottom">
 
         <com.stfalcon.chatkit.messages.MessagesList
             android:id="@+id/messagesList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:incomingDefaultBubbleColor="#e0e0e0"
-            app:incomingDefaultBubblePressedColor="#aeaeae"
-            app:incomingTextLinkColor="#6D4C41"
-            app:outcomingDefaultBubbleColor="#3F51B5"
-            app:outcomingDefaultBubblePressedColor="#303F9F"
-            app:outcomingTextLinkColor="#ff8a80"
+            app:incomingBubblePaddingBottom="10dp"
+            app:incomingBubblePaddingTop="10dp"
+            app:incomingDefaultBubbleColor="#d1c4e9"
+            app:incomingDefaultBubblePressedColor="#a094b7"
+            app:incomingTextColor="#000"
+            app:incomingTextLinkColor="#d7ccc8"
+            app:incomingTimeTextColor="#ede7f6"
+            app:incomingImageTimeTextColor="#ede7f6"
+
+            app:outcomingBubblePaddingBottom="10dp"
+            app:outcomingBubblePaddingTop="10dp"
+            app:outcomingDefaultBubbleColor="#4f6096"
+            app:outcomingDefaultBubblePressedColor="#1f3768"
+            app:outcomingTextColor="#fff"
+            app:outcomingTextLinkColor="#d7ccc8"
+            app:outcomingTimeTextColor="#90a4ae"
+            app:outcomingImageTimeTextColor="#90a4ae"
             app:textAutoLink="all" />
     </RelativeLayout>
 
+
     <RelativeLayout
-        android:id="@+id/rl_bottom"
+        android:id="@+id/bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#E9EDED"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:paddingLeft="@dimen/space10"
-        android:paddingTop="7dp"
-        android:paddingRight="@dimen/space5"
-        android:paddingBottom="7dp">
+        android:layout_margin="12dp"
+        android:background="@drawable/bg_white_rounded">
 
-        <Button
+        <ImageButton
             android:id="@+id/bt_send"
-            android:layout_width="60dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerInParent="true"
-            android:background="@drawable/btn_grey"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/send_3"
             android:gravity="center"
             android:onClick="onBtnSendClick"
-            android:stateListAnimator="@null"
-            android:text="Send"
-            android:textColor="@color/colorAccent"
-            android:textSize="@dimen/h3" />
+            />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/bt_image"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/bt_send"
-            android:background="@drawable/bg_white_rounded">
+            android:layout_toLeftOf="@id/bt_attachment"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/outline_image_24"
+            android:onClick="onBtnImageClick"/>
 
-            <ImageButton
-                android:id="@+id/bt_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/bt_attachment"
-                android:background="@android:color/transparent"
-                android:onClick="onBtnImageClick"
-                android:padding="@dimen/space10"
-                app:srcCompat="@drawable/outline_image_24" />
+        <ImageButton
+            android:id="@+id/bt_attachment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="34dp"
+            android:layout_toLeftOf="@+id/bt_send"
+            android:background="@android:color/transparent"
+            android:padding="@dimen/space10"
+            app:srcCompat="@drawable/ic_attach_file_black_24dp"
+            android:onClick="onBtnAttachmentClick"/>
 
-            <ImageButton
-                android:id="@+id/bt_attachment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="@android:color/transparent"
-                android:onClick="onBtnAttachmentClick"
-                android:padding="@dimen/space10"
-                app:srcCompat="@drawable/outline_attachment_24" />
-
-            <EditText
-                android:id="@+id/et_message"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/bt_image"
-                android:background="@android:color/transparent"
-                android:hint="Enter your message"
-                android:inputType="textAutoCorrect|textAutoComplete|textMultiLine|textCapSentences"
-                android:maxLines="3"
-                android:padding="@dimen/space15"
-                android:textColor="@color/colorTextBlack"
-                android:textColorHint="@color/colorTextHint"
-                android:textSize="@dimen/h3" />
-        </RelativeLayout>
+        <EditText
+            android:id="@+id/et_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/bt_image"
+            android:background="@android:color/transparent"
+            android:hint="Message..."
+            android:inputType="textAutoCorrect|textAutoComplete|textMultiLine|textCapSentences"
+            android:maxLines="3"
+            android:padding="@dimen/space15"
+            android:textColor="@color/colorTextBlack"
+            android:textColorHint="@color/colorTextHint"
+            android:textSize="@dimen/h3" />
     </RelativeLayout>
 </RelativeLayout>

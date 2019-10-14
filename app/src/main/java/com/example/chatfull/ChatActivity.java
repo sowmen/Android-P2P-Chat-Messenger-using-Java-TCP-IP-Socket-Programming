@@ -21,7 +21,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -52,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -82,7 +82,7 @@ public class ChatActivity extends AppCompatActivity
     MessagesListAdapter<Message> adapter;
     int cnt = 0; //Sets message counter id
 
-    Button btnSend;
+    ImageButton btnSend;
     ImageButton btnAttachment, btnImage;
     EditText input;
 
@@ -90,6 +90,7 @@ public class ChatActivity extends AppCompatActivity
     int[] colors;
 
     List<Message> messageArrayList;
+    boolean saved = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +105,14 @@ public class ChatActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(user.getName());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         this.messagesList = findViewById(R.id.messagesList);
 
@@ -150,7 +159,11 @@ public class ChatActivity extends AppCompatActivity
         ta.recycle();
 
         adapter.setOnMessageLongClickListener(this);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         messageArrayList = new ArrayList<Message>();
         gson = new Gson();
 
@@ -165,9 +178,11 @@ public class ChatActivity extends AppCompatActivity
             for (Message msg : messageArray) {
                 messageArrayList.add(msg);
             }
+            Collections.sort(messageArrayList,Message.DateComparator);
             adapter.addToEnd(messageArrayList,false);
             Log.e("MESSAGE_SIZE", messageArrayList.size() + "");
         }
+        saved = false;
     }
 
     public  boolean isStoragePermissionGranted() {
@@ -214,9 +229,6 @@ public class ChatActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.select_all:
-                Toast.makeText(getApplicationContext(), "Select All Clicked", Toast.LENGTH_SHORT).show();
-                break;
             case R.id.background_button:
                 ColorPickerDialogBuilder
                         .with(this)
@@ -454,16 +466,24 @@ public class ChatActivity extends AppCompatActivity
 
     @Override
     protected void onPause() {
+        if(saved == false) {
+            String jsonDataString = gson.toJson(messageArrayList);
+            editor.putString(SHARED_PREFERENCES_KEY_MESSAGE_LIST, jsonDataString);
+            editor.commit();
+            saved = true;
+        }
         super.onPause();
-
-        String jsonDataString = gson.toJson(messageArrayList);
-        editor.putString(SHARED_PREFERENCES_KEY_MESSAGE_LIST, jsonDataString);
-        editor.commit();
     }
 
     @Override
     public void onBackPressed() {
         Log.e("CHAT_ACTIVITY", "PAUSE");
+        if(saved == false) {
+            String jsonDataString = gson.toJson(messageArrayList);
+            editor.putString(SHARED_PREFERENCES_KEY_MESSAGE_LIST, jsonDataString);
+            editor.commit();
+            saved = true;
+        }
         Message message = new Message(Integer.toString(++cnt), MainActivity.me, null);
         message.setOffline(true);
         sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
@@ -560,5 +580,16 @@ public class ChatActivity extends AppCompatActivity
                 adapter.addToEnd(more_messages, false);
             }
         }, 500);
+    }
+
+    public static <T> List<T> removeDuplicates(List<T> list)
+    {
+        List<T> newList = new ArrayList<T>();
+        for (T element : list) {
+            if (!newList.contains(element)) {
+                newList.add(element);
+            }
+        }
+        return newList;
     }
 }
