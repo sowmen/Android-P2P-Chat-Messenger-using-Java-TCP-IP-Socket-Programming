@@ -1,14 +1,17 @@
 package com.example.chatfull;
 
+import android.Manifest;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -29,6 +32,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
 import com.flask.colorpicker.ColorPickerView;
@@ -59,6 +63,7 @@ public class ChatActivity extends AppCompatActivity
     private static final int PICK_FILE_REQUEST = 1;
     private static final int PICK_IMAGE_REQUEST = 2;
     private static final byte CONTENT_TYPE_FILE = 1;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 200;
     private static String PREFERENCE_FILE_KEY;
     private final static String SHARED_PREFERENCES_KEY_MESSAGE_LIST = "User_Info_List";
     SharedPreferences sharedPref;
@@ -90,6 +95,7 @@ public class ChatActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_alternate);
+        isStoragePermissionGranted();
 
         user = (User) getIntent().getSerializableExtra("user");
 
@@ -161,6 +167,29 @@ public class ChatActivity extends AppCompatActivity
             }
             adapter.addToEnd(messageArrayList,false);
             Log.e("MESSAGE_SIZE", messageArrayList.size() + "");
+        }
+    }
+
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE );
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            //resume tasks needing this permission
         }
     }
 
