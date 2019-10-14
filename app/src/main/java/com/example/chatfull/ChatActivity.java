@@ -1,15 +1,20 @@
 package com.example.chatfull;
 
+import android.Manifest;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.OpenableColumns;
 import android.util.Base64;
 import android.util.Log;
@@ -27,12 +32,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
+import com.google.gson.Gson;
 import com.stfalcon.chatkit.commons.ImageLoader;
 import com.stfalcon.chatkit.messages.MessageHolders;
 import com.stfalcon.chatkit.messages.MessagesList;
@@ -45,14 +52,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class ChatActivity extends AppCompatActivity
         implements MessageHolders.ContentChecker<Message>,
-        MessagesListAdapter.OnMessageLongClickListener<Message> {
+        MessagesListAdapter.OnMessageLongClickListener<Message>,
+        MessagesListAdapter.OnLoadMoreListener{
 
     private static final int PICK_FILE_REQUEST = 1;
     private static final int PICK_IMAGE_REQUEST = 2;
     private static final byte CONTENT_TYPE_FILE = 1;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 200;
+    private static String PREFERENCE_FILE_KEY;
+    private final static String SHARED_PREFERENCES_KEY_MESSAGE_LIST = "User_Info_List";
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
+    Gson gson;
 
     private User user;
     private SendMessage sender;
@@ -60,9 +76,11 @@ public class ChatActivity extends AppCompatActivity
 
     MessagesList messagesList;
     protected final String senderId = "1";
+    private static final int TOTAL_MESSAGES_COUNT = 20;
+    private Date lastLoadedDate;
 
     MessagesListAdapter<Message> adapter;
-    int cnt = 0;
+    int cnt = 0; //Sets message counter id
 
     Button btnSend;
     ImageButton btnAttachment, btnImage;
@@ -71,12 +89,13 @@ public class ChatActivity extends AppCompatActivity
     RelativeLayout back_view;
     int[] colors;
 
-    ArrayList<Message> messageArrayList;
+    List<Message> messageArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_alternate);
+        isStoragePermissionGranted();
 
         user = (User) getIntent().getSerializableExtra("user");
 
@@ -131,6 +150,47 @@ public class ChatActivity extends AppCompatActivity
         ta.recycle();
 
         adapter.setOnMessageLongClickListener(this);
+
+        messageArrayList = new ArrayList<Message>();
+        gson = new Gson();
+
+        PREFERENCE_FILE_KEY = user.getId();
+        sharedPref = this.getSharedPreferences(
+                PREFERENCE_FILE_KEY, Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
+
+        String jsonDataString = sharedPref.getString(SHARED_PREFERENCES_KEY_MESSAGE_LIST,"");
+        if(jsonDataString.length() > 0) {
+            Message messageArray[] = gson.fromJson(jsonDataString, Message[].class);
+            for (Message msg : messageArray) {
+                messageArrayList.add(msg);
+            }
+            adapter.addToEnd(messageArrayList,false);
+            Log.e("MESSAGE_SIZE", messageArrayList.size() + "");
+        }
+    }
+
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE );
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            //resume tasks needing this permission
+        }
     }
 
     private void setClipboard(Context context, String text) {
@@ -202,6 +262,8 @@ public class ChatActivity extends AppCompatActivity
         message.setFilename(null);
         adapter.addToStart(message, true);
 
+        messageArrayList.add(message);
+
         sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
         sender.execute();
         Log.e("SEND", input.getText().toString());
@@ -242,6 +304,9 @@ public class ChatActivity extends AppCompatActivity
                 message.setIsFile(true);
 
                 adapter.addToStart(message, true);
+
+                messageArrayList.add(message);
+
                 sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
                 sender.execute();
             }
@@ -260,6 +325,9 @@ public class ChatActivity extends AppCompatActivity
                 message.setIsFile(false);
 
                 adapter.addToStart(message, true);
+
+                messageArrayList.add(message);
+
                 sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
                 sender.execute();
             }
@@ -367,6 +435,9 @@ public class ChatActivity extends AppCompatActivity
                 } else if (msg.isColor()) {
                     back_view.setBackgroundColor(msg.getColor());
                 }
+
+                if(!msg.isColor())
+                    messageArrayList.add(msg);
             }
         });
     }
@@ -379,6 +450,15 @@ public class ChatActivity extends AppCompatActivity
         if (messageReceiveServer != null)
             messageReceiveServer.onDestroy();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        String jsonDataString = gson.toJson(messageArrayList);
+        editor.putString(SHARED_PREFERENCES_KEY_MESSAGE_LIST, jsonDataString);
+        editor.commit();
     }
 
     @Override
@@ -454,5 +534,31 @@ public class ChatActivity extends AppCompatActivity
             DownloadManager downloadManager = (DownloadManager) getApplicationContext().getSystemService(DOWNLOAD_SERVICE);
             downloadManager.addCompletedDownload(message.getId() + message.getFilename(), message.getId() + message.getFilename(), true, "image/*", file.getAbsolutePath(), file.length(), true);
         }
+    }
+
+    @Override
+    public void onLoadMore(int page, int totalItemsCount) {
+        Log.i("TAG", "onLoadMore: " + page + " " + totalItemsCount);
+        if (totalItemsCount < TOTAL_MESSAGES_COUNT) {
+            loadMessages();
+        }
+    }
+
+    protected void loadMessages() {
+        new Handler().postDelayed(new Runnable() { //imitation of internet connection
+            @Override
+            public void run() {
+                Log.e("load","Ashche");
+                ArrayList<Message> more_messages = new ArrayList<>();
+                for(int i=0, j=0; i<messageArrayList.size() && j<10; i++){
+                    if(messageArrayList.get(i).getCreatedAt().before(lastLoadedDate)){
+                        more_messages.add(messageArrayList.get(i));
+                        j++;
+                    }
+                }
+                lastLoadedDate = more_messages.get(more_messages.size() - 1).getCreatedAt();
+                adapter.addToEnd(more_messages, false);
+            }
+        }, 500);
     }
 }
