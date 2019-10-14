@@ -39,7 +39,6 @@ public class Message implements IMessage, Serializable, MessageContentType.Image
     public boolean isOffline() {
         return offline;
     }
-
     public void setOffline(boolean offline) {
         this.offline = offline;
     }
@@ -50,7 +49,6 @@ public class Message implements IMessage, Serializable, MessageContentType.Image
     public boolean isFile() {
         return isFile;
     }
-
     public void setIsFile(boolean file) {
         isFile = file;
     }

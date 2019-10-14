@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class ChatActivity extends AppCompatActivity
@@ -59,16 +60,18 @@ public class ChatActivity extends AppCompatActivity
 
     MessagesList messagesList;
     protected final String senderId = "1";
-    private final User me = new User("1", "SELF"); // Assign Self Username
+
     MessagesListAdapter<Message> adapter;
     int cnt = 0;
 
     Button btnSend;
-    ImageButton btnAttachement, btnImage;
+    ImageButton btnAttachment, btnImage;
     EditText input;
 
     RelativeLayout back_view;
     int[] colors;
+
+    ArrayList<Message> messageArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +79,6 @@ public class ChatActivity extends AppCompatActivity
         setContentView(R.layout.activity_chat_alternate);
 
         user = (User) getIntent().getSerializableExtra("user");
-        user.setId("0");
-        user.setName("ABAL"); // Assign user username
 
         messageReceiveServer = new MessageReceiveServer(ShowInfoActivity.getSelfIpAddress(), ShowInfoActivity.getSelfPort(), this);
 
@@ -116,11 +117,12 @@ public class ChatActivity extends AppCompatActivity
 
         input = findViewById(R.id.et_message);
         btnSend = findViewById(R.id.bt_send);
-        btnAttachement = findViewById(R.id.bt_attachment);
+        btnAttachment = findViewById(R.id.bt_attachment);
         btnImage = findViewById(R.id.bt_image);
 
         //Initialize color picker
         back_view = findViewById(R.id.background_view);
+
         TypedArray ta = getApplicationContext().getResources().obtainTypedArray(R.array.colors);
         colors = new int[ta.length()];
         for (int i = 0; i < ta.length(); i++) {
@@ -165,13 +167,13 @@ public class ChatActivity extends AppCompatActivity
                         .setOnColorSelectedListener(new OnColorSelectedListener() {
                             @Override
                             public void onColorSelected(int selectedColor) {
-                                Toast.makeText(getApplicationContext(),"onColorSelected: 0x" + Integer.toHexString(selectedColor),Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "onColorSelected: 0x" + Integer.toHexString(selectedColor), Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setPositiveButton("ok", new ColorPickerClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
-                                Message message = new Message(Integer.toString(++cnt), me, null, Calendar.getInstance().getTime());
+                                Message message = new Message(Integer.toString(++cnt), MainActivity.me, null, Calendar.getInstance().getTime());
                                 message.setColor(selectedColor);
                                 message.setIsColor(true);
 
@@ -195,7 +197,7 @@ public class ChatActivity extends AppCompatActivity
     public void onBtnSendClick(View view) {
         if (input.getText().toString() == null) return;
 
-        Message message = new Message(Integer.toString(++cnt), me, input.getText().toString(), Calendar.getInstance().getTime());
+        Message message = new Message(Integer.toString(++cnt), MainActivity.me, input.getText().toString(), Calendar.getInstance().getTime());
         message.setIsImage(false);
         message.setFilename(null);
         adapter.addToStart(message, true);
@@ -228,7 +230,7 @@ public class ChatActivity extends AppCompatActivity
         if (requestCode == PICK_FILE_REQUEST && data != null) {
             if (resultCode == RESULT_OK) {
                 Uri file = data.getData();
-                Message message = new Message(Integer.toString(++cnt), me, null, Calendar.getInstance().getTime());
+                Message message = new Message(Integer.toString(++cnt), MainActivity.me, null, Calendar.getInstance().getTime());
                 message.setFilename(getFileName(file));
                 try {
                     message.setFile(getBytes(this, file));
@@ -246,7 +248,7 @@ public class ChatActivity extends AppCompatActivity
         } else if (requestCode == PICK_IMAGE_REQUEST && data != null) {
             if (resultCode == RESULT_OK) {
                 Uri file = data.getData();
-                Message message = new Message(Integer.toString(++cnt), me, null, Calendar.getInstance().getTime());
+                Message message = new Message(Integer.toString(++cnt), MainActivity.me, null, Calendar.getInstance().getTime());
                 message.setFilename(getFileName(file));
                 try {
                     message.setFile(getBytes(this, file));
@@ -382,7 +384,7 @@ public class ChatActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         Log.e("CHAT_ACTIVITY", "PAUSE");
-        Message message = new Message(Integer.toString(++cnt), me, null);
+        Message message = new Message(Integer.toString(++cnt), MainActivity.me, null);
         message.setOffline(true);
         sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
         sender.execute();

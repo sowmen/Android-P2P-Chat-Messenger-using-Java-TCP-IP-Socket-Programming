@@ -48,14 +48,17 @@ public class Server {
                         continue;
 
                     String client_ip = client_cred.substring(0, client_cred.indexOf(':'));
-                    String client_port = client_cred.substring(client_cred.indexOf(':') + 1);
+                    String client_port = client_cred.substring(client_cred.indexOf(':') + 1, client_cred.indexOf('_'));
+                    String client_name = client_cred.substring(client_cred.indexOf('_')+1);
 
                     user = new User(client_ip, Integer.parseInt(client_port));
+                    user.setName(client_name);
+                    user.setId(client_cred);
                     //MainActivity.userArrayList.add(user);
 
-                    //---Testing Connection with response. Optional---
+                    //---Sending self name---
                     try {
-                        String response_message = self_ip_address + ":" + self_port;
+                        String response_message = self_ip_address + ":" + self_port + "_" + MainActivity.me.getName();
                         PrintWriter out = new PrintWriter(received_userSocket.getOutputStream(), true);
                         out.println(response_message);
 

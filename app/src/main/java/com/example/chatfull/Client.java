@@ -33,22 +33,26 @@ public class Client extends AsyncTask<Void, Void, String> {
             if (clientSocket != null) {
 
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-                out.println(ShowInfoActivity.getSelfIpAddress() + ":" + ShowInfoActivity.getSelfPort());
+                out.println(ShowInfoActivity.getSelfIpAddress() + ":" + ShowInfoActivity.getSelfPort() + "_" + MainActivity.me.getName());
 
                 Log.e("CLIENT", "After Connection");
                 user = new User(dstAddress, dstPort);
-                activity.setUser(user);
+
                 //MainActivity.userArrayList.add(user);
             }
 
             try {
                 BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 serverResponse = input.readLine();
+
+                String connected_name = serverResponse.substring(serverResponse.indexOf('_')+1);
+                user.setName(connected_name);
+                user.setId(serverResponse);
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.e("CLIENT", "Could not read socket");
             }
-
+            activity.setUser(user);
         } catch (Exception e) {
             e.printStackTrace();
             serverResponse = e.getCause().toString();

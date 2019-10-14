@@ -56,4 +56,6 @@ dependencies {
     implementation 'com.github.kenglxn.QRGen:android:2.6.0'
 
     implementation 'com.github.QuadFlask:colorpicker:0.0.13'
+
+    implementation 'com.google.code.gson:gson:2.8.6'
 }
