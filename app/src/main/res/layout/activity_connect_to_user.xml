@@ -4,10 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".ConnectToUserActivity"
     android:orientation="vertical"
     android:gravity="center">
-
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:background="@drawable/background_gradient"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
@@ -19,12 +33,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.286">
+        app:layout_constraintVertical_bias="0.186">
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
             android:text="IP Address    : "
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -32,7 +47,8 @@
         <EditText
             android:id="@+id/ipInput"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
+            android:backgroundTint="#fff"
             android:inputType="number|textWebEditText" />
 
     </LinearLayout>
@@ -57,6 +73,7 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
             android:text="Port Number : "
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -65,6 +82,7 @@
             android:id="@+id/portInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="#fff"
             android:inputType="number|textWebEditText" />
     </LinearLayout>
 
@@ -78,11 +96,13 @@
         android:layout_marginBottom="8dp"
         android:onClick="connectBtnListener"
         android:text="Connect"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.069" />
+        app:layout_constraintVertical_bias="0.03"
+        android:background="@drawable/buttonscan"/>
 
     <Button
         android:id="@+id/scan_button"
@@ -91,9 +111,12 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="80dp"
+        android:textColor="#FFFFFF"
         android:text="Scan QR CODE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:onClick="onScanBtnClick"/>
+        android:onClick="onScanBtnClick"
+        android:background="@drawable/buttonscan"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
