@@ -4,6 +4,7 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -33,6 +34,7 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
+import com.google.gson.Gson;
 import com.stfalcon.chatkit.commons.ImageLoader;
 import com.stfalcon.chatkit.messages.MessageHolders;
 import com.stfalcon.chatkit.messages.MessagesList;
@@ -45,6 +47,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class ChatActivity extends AppCompatActivity
         implements MessageHolders.ContentChecker<Message>,
@@ -53,6 +56,11 @@ public class ChatActivity extends AppCompatActivity
     private static final int PICK_FILE_REQUEST = 1;
     private static final int PICK_IMAGE_REQUEST = 2;
     private static final byte CONTENT_TYPE_FILE = 1;
+    private static String PREFERENCE_FILE_KEY;
+    private final static String SHARED_PREFERENCES_KEY_MESSAGE_LIST = "User_Info_List";
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
+    Gson gson;
 
     private User user;
     private SendMessage sender;
@@ -71,7 +79,7 @@ public class ChatActivity extends AppCompatActivity
     RelativeLayout back_view;
     int[] colors;
 
-    ArrayList<Message> messageArrayList;
+    List<Message> messageArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +87,22 @@ public class ChatActivity extends AppCompatActivity
         setContentView(R.layout.activity_chat_alternate);
 
         user = (User) getIntent().getSerializableExtra("user");
+        messageArrayList = new ArrayList<Message>();
+        gson = new Gson();
 
+        PREFERENCE_FILE_KEY = user.getId();
+        sharedPref = this.getSharedPreferences(
+                PREFERENCE_FILE_KEY, Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
+
+        String jsonDataString = sharedPref.getString(SHARED_PREFERENCES_KEY_MESSAGE_LIST,"");
+        if(jsonDataString.length() > 0) {
+            Message messageArray[] = gson.fromJson(jsonDataString, Message[].class);
+            for (Message msg : messageArray) {
+                messageArrayList.add(msg);
+            }
+            Log.e("MESSAGE_SIZE", messageArrayList.size() + "");
+        }
         messageReceiveServer = new MessageReceiveServer(ShowInfoActivity.getSelfIpAddress(), ShowInfoActivity.getSelfPort(), this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -202,6 +225,8 @@ public class ChatActivity extends AppCompatActivity
         message.setFilename(null);
         adapter.addToStart(message, true);
 
+        messageArrayList.add(message);
+
         sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
         sender.execute();
         Log.e("SEND", input.getText().toString());
@@ -242,6 +267,9 @@ public class ChatActivity extends AppCompatActivity
                 message.setIsFile(true);
 
                 adapter.addToStart(message, true);
+
+                messageArrayList.add(message);
+
                 sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
                 sender.execute();
             }
@@ -260,6 +288,9 @@ public class ChatActivity extends AppCompatActivity
                 message.setIsFile(false);
 
                 adapter.addToStart(message, true);
+
+                messageArrayList.add(message);
+
                 sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
                 sender.execute();
             }
@@ -367,6 +398,9 @@ public class ChatActivity extends AppCompatActivity
                 } else if (msg.isColor()) {
                     back_view.setBackgroundColor(msg.getColor());
                 }
+
+                if(!msg.isColor())
+                    messageArrayList.add(msg);
             }
         });
     }
@@ -379,6 +413,15 @@ public class ChatActivity extends AppCompatActivity
         if (messageReceiveServer != null)
             messageReceiveServer.onDestroy();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        String jsonDataString = gson.toJson(messageArrayList);
+        editor.putString(SHARED_PREFERENCES_KEY_MESSAGE_LIST, jsonDataString);
+        editor.commit();
     }
 
     @Override
