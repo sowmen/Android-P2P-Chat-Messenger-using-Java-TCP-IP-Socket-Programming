@@ -2,6 +2,7 @@ package com.example.chatfull;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -74,6 +75,7 @@ public class Client extends AsyncTask<Void, Void, String> {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                activity.progressOverlay.setVisibility(View.INVISIBLE);
                 Toast.makeText(activity.getApplicationContext(), serverResponse, Toast.LENGTH_LONG).show();
             }
         });

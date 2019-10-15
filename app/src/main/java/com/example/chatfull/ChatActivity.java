@@ -91,7 +91,7 @@ public class ChatActivity extends AppCompatActivity
     int[] colors;
 
     List<Message> messageArrayList;
-    boolean saved = false, loaded = false;
+    boolean saved = false, loaded = false, offline = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,8 +128,6 @@ public class ChatActivity extends AppCompatActivity
                         .asBitmap()
                         .load(byteArray)
                         .error(R.drawable.baseline_insert_drive_file_24)
-                        .thumbnail(0.25f)
-                        .sizeMultiplier(.60f)
                         .into(imageView);
             }
         };
@@ -433,6 +431,7 @@ public class ChatActivity extends AppCompatActivity
     public void setMessage(final Message msg) {
         Log.e("IN_SET", msg.toString());
         if (msg.isOffline()) {
+            offline = true;
             if (sender != null)
                 sender.cancel(true);
             if (messageReceiveServer != null)
@@ -507,14 +506,16 @@ public class ChatActivity extends AppCompatActivity
             saved = true;
         }
         loaded = false;
-        Message message = new Message(Integer.toString(++cnt), MainActivity.me, null);
-        message.setOffline(true);
-        sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
-        sender.execute();
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(offline == false) {
+            Message message = new Message(Integer.toString(++cnt), MainActivity.me, null);
+            message.setOffline(true);
+            sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
+            sender.execute();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         super.onBackPressed();
         if (sender != null && !sender.isCancelled())
@@ -615,4 +616,5 @@ public class ChatActivity extends AppCompatActivity
         }
         return newList;
     }
+
 }

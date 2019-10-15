@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,9 +16,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.material.snackbar.Snackbar;
 import com.notbytes.barcode_reader.BarcodeReaderActivity;
 
-public class ConnectToUserActivity extends AppCompatActivity {
+public class ConnectToUserActivity extends AppCompatActivity{
 
     private static final int BARCODE_READER_ACTIVITY_REQUEST = 1208;
 
@@ -24,11 +27,14 @@ public class ConnectToUserActivity extends AppCompatActivity {
     private Button connectBtn, scanBtn;
     private Client myClient;
     private User user;
+    FrameLayout progressOverlay;
 
     public void setUser(User user) {
         this.user = user;
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         intent.putExtra("user", myClient.user);
+
+        progressOverlay.setVisibility(View.INVISIBLE);
         startActivity(intent);
     }
 
@@ -41,11 +47,14 @@ public class ConnectToUserActivity extends AppCompatActivity {
         portInput = findViewById(R.id.portInput);
         connectBtn = findViewById(R.id.connectBtn);
         scanBtn = findViewById(R.id.scan_button);
+        progressOverlay = findViewById(R.id.progress_overlay);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        progressOverlay.setVisibility(View.INVISIBLE);
         if (myClient != null && !myClient.isCancelled())
             myClient.cancel(true);
     }
@@ -65,6 +74,16 @@ public class ConnectToUserActivity extends AppCompatActivity {
     }
 
     public void connectBtnListener(View view) {
+        if(portInput.getText().length() < 2 || ipInput.getText().length() < 2){
+            Snackbar snackbar = Snackbar
+                    .make(ipInput, "Please Enter Valid IP Address and/or Port number.", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return;
+        }
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(portInput.getWindowToken(), 0);
+        progressOverlay.setVisibility(View.VISIBLE);
         myClient = new Client(ipInput.getText().toString(), Integer.parseInt(portInput.getText().toString()), this);
         myClient.execute();
     }

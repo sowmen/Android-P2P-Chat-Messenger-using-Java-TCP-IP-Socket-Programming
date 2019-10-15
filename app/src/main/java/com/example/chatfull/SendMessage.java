@@ -3,6 +3,8 @@ package com.example.chatfull;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
@@ -28,9 +30,25 @@ public class SendMessage extends AsyncTask<Void, Void, String> {
             Log.e("SEND_MSG", "Connected, Sending: " + message.getText());
 
             if (clientSocket != null) {
+                final Snackbar snackbar =  Snackbar.make(activity.btnSend, "Uploading... Socket is busy, Please Wait", Snackbar.LENGTH_INDEFINITE);
+                if(message.isFile() || message.isImage()){
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            snackbar.show();
+                        }
+                    });
+                }
                 ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
                 out.writeObject(message);
                 out.flush();
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(snackbar.isShown()) snackbar.dismiss();
+                    }
+                });
 
                 Log.e("SEND_MSG", "DONE: " + message.getText());
                 activity.stopSender();

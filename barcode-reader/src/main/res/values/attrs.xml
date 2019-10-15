@@ -12,4 +12,5 @@
         <attr name="auto_focus" format="boolean" />
         <attr name="use_flash" format="boolean" />
     </declare-styleable>
+
 </resources>
