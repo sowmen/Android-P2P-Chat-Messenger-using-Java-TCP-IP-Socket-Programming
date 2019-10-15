@@ -38,6 +38,7 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.stfalcon.chatkit.commons.ImageLoader;
 import com.stfalcon.chatkit.messages.MessageHolders;
@@ -160,6 +161,9 @@ public class ChatActivity extends AppCompatActivity
 
         adapter.setOnMessageLongClickListener(this);
         loaded = false;
+        btnSend.setEnabled(true);
+        btnAttachment.setEnabled(true);
+        btnImage.setEnabled(true);
     }
 
     @Override
@@ -433,32 +437,40 @@ public class ChatActivity extends AppCompatActivity
                 sender.cancel(true);
             if (messageReceiveServer != null)
                 messageReceiveServer.onDestroy();
-            this.finish();
-            return;
-        }
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (msg.getText() != null) {
-                    msg.setUser(user);
-                    adapter.addToStart(msg, true);
-                    messageArrayList.add(msg);
-                } else if (msg.isImage()) {
-                    msg.setUser(user);
-                    adapter.addToStart(msg, true);
-                    messageArrayList.add(msg);
-                } else if (msg.isFile()) {
-                    msg.setUser(user);
-                    adapter.addToStart(msg, true);
-                    messageArrayList.add(msg);
-                } else if (msg.isColor()) {
-                    back_view.setBackgroundColor(msg.getColor());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Snackbar.make(btnSend, user.getName() + " is Offline. Messages will not be sent.", Snackbar.LENGTH_INDEFINITE)
+                            .show();
+                    btnSend.setEnabled(false);
+                    btnAttachment.setEnabled(false);
+                    btnImage.setEnabled(false);
                 }
+            });
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (msg.getText() != null) {
+                        msg.setUser(user);
+                        adapter.addToStart(msg, true);
+                        messageArrayList.add(msg);
+                    } else if (msg.isImage()) {
+                        msg.setUser(user);
+                        adapter.addToStart(msg, true);
+                        messageArrayList.add(msg);
+                    } else if (msg.isFile()) {
+                        msg.setUser(user);
+                        adapter.addToStart(msg, true);
+                        messageArrayList.add(msg);
+                    } else if (msg.isColor()) {
+                        back_view.setBackgroundColor(msg.getColor());
+                    }
 
 
-            }
-        });
+                }
+            });
+        }
     }
 
     @Override
@@ -484,6 +496,9 @@ public class ChatActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        btnSend.setEnabled(true);
+        btnAttachment.setEnabled(true);
+        btnImage.setEnabled(true);
         Log.e("CHAT_ACTIVITY", "PAUSE");
         if(saved == false) {
             String jsonDataString = gson.toJson(messageArrayList);
