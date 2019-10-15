@@ -1,6 +1,6 @@
 # Android P2P Chat Application using JAVA Socket
 
-This is a chat application which allows text messaging and files sharing using JAVA Socekt
+This is a chat application which allows text messaging and files sharing using JAVA Socket
 
 
 ## Features
@@ -21,6 +21,13 @@ This is a chat application which allows text messaging and files sharing using J
 
 
 ## Demo
+<img src="app/src/main/res/photo_2019-10-15_16-17-37.jpg" width="225" height="400"> <img src="app/src/main/res/photo_2019-10-15_16-17-52.jpg" width="225" height="400"> <img src="app/src/main/res/photo_2019-10-15_16-30-26.jpg" width="225" height="400"> 
+
+<img src="app/src/main/res/photo_2019-10-15_16-17-44.jpg" width="225" height="400"> <img src="app/src/main/res/photo_2019-10-15_16-17-34.jpg" width="225" height="400"> <img src="app/src/main/res/photo_2019-10-15_16-17-03.jpg" width="225" height="400">
+
+
+<img src="app/src/main/res/photo_2019-10-15_16-17-48.jpg" width="225" height="400"> <img src="app/src/main/res/photo_2019-10-15_16-17-40.jpg" width="225" height="400">
+
 
 
 ## Instructions
