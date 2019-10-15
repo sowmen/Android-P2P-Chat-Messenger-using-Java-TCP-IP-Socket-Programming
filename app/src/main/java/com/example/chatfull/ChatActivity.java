@@ -90,7 +90,7 @@ public class ChatActivity extends AppCompatActivity
     int[] colors;
 
     List<Message> messageArrayList;
-    boolean saved = false;
+    boolean saved = false, loaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,28 +159,33 @@ public class ChatActivity extends AppCompatActivity
         ta.recycle();
 
         adapter.setOnMessageLongClickListener(this);
+        loaded = false;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        messageArrayList = new ArrayList<Message>();
-        gson = new Gson();
 
-        PREFERENCE_FILE_KEY = user.getId();
-        sharedPref = this.getSharedPreferences(
-                PREFERENCE_FILE_KEY, Context.MODE_PRIVATE);
-        editor = sharedPref.edit();
+        if(loaded == false) {
+            messageArrayList = new ArrayList<Message>();
+            gson = new Gson();
 
-        String jsonDataString = sharedPref.getString(SHARED_PREFERENCES_KEY_MESSAGE_LIST,"");
-        if(jsonDataString.length() > 0) {
-            Message messageArray[] = gson.fromJson(jsonDataString, Message[].class);
-            for (Message msg : messageArray) {
-                messageArrayList.add(msg);
+            PREFERENCE_FILE_KEY = user.getId();
+            sharedPref = this.getSharedPreferences(
+                    PREFERENCE_FILE_KEY, Context.MODE_PRIVATE);
+            editor = sharedPref.edit();
+
+            String jsonDataString = sharedPref.getString(SHARED_PREFERENCES_KEY_MESSAGE_LIST, "");
+            if (jsonDataString.length() > 0) {
+                Message messageArray[] = gson.fromJson(jsonDataString, Message[].class);
+                for (Message msg : messageArray) {
+                    messageArrayList.add(msg);
+                }
+                Collections.sort(messageArrayList, Message.DateComparator);
+                adapter.addToEnd(messageArrayList, false);
+                Log.e("MESSAGE_SIZE", messageArrayList.size() + "");
             }
-            Collections.sort(messageArrayList,Message.DateComparator);
-            adapter.addToEnd(messageArrayList,false);
-            Log.e("MESSAGE_SIZE", messageArrayList.size() + "");
+            loaded = true;
         }
         saved = false;
     }
@@ -486,6 +491,7 @@ public class ChatActivity extends AppCompatActivity
             editor.commit();
             saved = true;
         }
+        loaded = false;
         Message message = new Message(Integer.toString(++cnt), MainActivity.me, null);
         message.setOffline(true);
         sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
