@@ -29,7 +29,7 @@ This is a chat application which allows text messaging and files sharing using J
 ## Instructions
 
   1. First Connect both the devices to same wifi network.
-  2. Set username. <strong>Username is CASE-SENSITIVE</strong>.  
+  2. Set username. <strong>Username is CASE-SENSITIVE</strong>. Username is used to store messages.
   3. Click the "Show Information" button in one device.  
   4. Click "Enter IP:Port" button in another device.  
   5. Scan The QR Code & click connect button.  
