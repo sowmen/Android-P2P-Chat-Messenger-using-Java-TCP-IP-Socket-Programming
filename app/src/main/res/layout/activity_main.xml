@@ -3,98 +3,84 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/black"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    android:background="@drawable/background_gradient"
     android:gravity="center"
-    android:orientation="vertical">
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ImageView
-            android:background="@drawable/background_gradient"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp" />
-        <ImageView
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp" />
-    </LinearLayout>
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
 
-    <LinearLayout
-
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="45dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="45dp"
-        android:layout_marginBottom="0dp"
-
-        app:layout_constraintBottom_toTopOf="@+id/enterInfo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/ic_user_circle_solid"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/nameInput"
+        app:layout_constraintHorizontal_bias="0.892"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.8">
+        app:layout_constraintVertical_bias="0.337" />
 
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:text="Name : "
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginLeft="5dp"/>
-
-        <EditText
-            android:drawablePadding="20dp"
-            android:drawableRight="@drawable/ic_person"
-            android:id="@+id/nameInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#fff"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="5dp"
-            android:paddingLeft="10dp" />
-    </LinearLayout>
+    <EditText
+        android:id="@+id/nameInput"
+        android:layout_width="240dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="#fff"
+        android:fontFamily="sans-serif-smallcaps"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.625"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.33"
+        android:hint="User name"
+        android:textColorHint="#fff"/>
 
     <Button
         android:id="@+id/showInfo"
-        android:textColor="#FFFFFF"
-        android:textSize="15sp"
-        android:layout_width="350dp"
-        android:layout_height="50dp"
-
+        android:layout_width="279dp"
+        android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+
         android:layout_marginBottom="250dp"
+        android:background="@drawable/buttonshape"
+        android:elevation="25dp"
+        android:fontFamily="@font/moon_bold"
         android:text="Show information"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/buttonshape"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/enterInfo"
-        android:textColor="#FFFFFF"
-        android:textSize="15sp"
-        android:layout_width="350dp"
-        android:layout_height="50dp"
+        android:layout_width="277dp"
+        android:layout_height="45dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
-        android:text="Enter Ip : port"
-        app:layout_constraintBottom_toTopOf="@+id/showInfo"
+        android:background="@drawable/buttonshape"
+        android:elevation="10dp"
+        android:fontFamily="@font/moon_bold"
 
+        android:text="Enter Ip : port"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/showInfo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/buttonshape"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

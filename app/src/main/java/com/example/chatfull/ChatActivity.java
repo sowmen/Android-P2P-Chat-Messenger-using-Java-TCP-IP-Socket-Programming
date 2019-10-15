@@ -438,18 +438,20 @@ public class ChatActivity extends AppCompatActivity
                 if (msg.getText() != null) {
                     msg.setUser(user);
                     adapter.addToStart(msg, true);
+                    messageArrayList.add(msg);
                 } else if (msg.isImage()) {
                     msg.setUser(user);
                     adapter.addToStart(msg, true);
+                    messageArrayList.add(msg);
                 } else if (msg.isFile()) {
                     msg.setUser(user);
                     adapter.addToStart(msg, true);
+                    messageArrayList.add(msg);
                 } else if (msg.isColor()) {
                     back_view.setBackgroundColor(msg.getColor());
                 }
 
-                if(!msg.isColor())
-                    messageArrayList.add(msg);
+
             }
         });
     }

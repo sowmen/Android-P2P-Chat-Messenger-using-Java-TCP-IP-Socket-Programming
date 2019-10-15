@@ -30,7 +30,7 @@
             app:incomingTextColor="#000"
             app:incomingTextLinkColor="#d7ccc8"
             app:incomingTimeTextColor="#ede7f6"
-            app:incomingImageTimeTextColor="#ede7f6"
+            app:incomingImageTimeTextColor="#90a4ae"
 
             app:outcomingBubblePaddingBottom="10dp"
             app:outcomingBubblePaddingTop="10dp"

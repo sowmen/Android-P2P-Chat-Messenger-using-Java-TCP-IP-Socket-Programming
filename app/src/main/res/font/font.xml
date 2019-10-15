@@ -5,4 +5,14 @@
         android:fontStyle="normal"
         android:fontWeight="400"
         android:font="@font/sanfran" />
+
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/moon_light" />
+
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/moon_bold" />
 </font-family>

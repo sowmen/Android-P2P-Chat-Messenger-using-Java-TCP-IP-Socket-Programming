@@ -8,6 +8,8 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.snackbar.Snackbar;
+
 public class MainActivity extends AppCompatActivity {
 
     Button showInfoBtn, enterInfoBtn;
@@ -26,6 +28,12 @@ public class MainActivity extends AppCompatActivity {
         showInfoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(nameInput.getText().toString().length() < 1){
+                    Snackbar snackbar = Snackbar
+                            .make(nameInput, "Please Enter Username", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    return;
+                }
                 me = new User("1", nameInput.getText().toString());
                 Intent intent = new Intent(getApplicationContext(), ShowInfoActivity.class);
                 startActivity(intent);
@@ -35,6 +43,12 @@ public class MainActivity extends AppCompatActivity {
         enterInfoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(nameInput.getText().toString().length() < 1){
+                    Snackbar snackbar = Snackbar
+                            .make(nameInput, "Please Enter Username", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    return;
+                }
                 me = new User("1", nameInput.getText().toString());
                 Intent intent = new Intent(getApplicationContext(), ConnectToUserActivity.class);
                 startActivity(intent);
