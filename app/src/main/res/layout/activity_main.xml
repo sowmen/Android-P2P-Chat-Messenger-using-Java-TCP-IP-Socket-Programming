@@ -35,16 +35,16 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:backgroundTint="#fff"
-        android:fontFamily="sans-serif-smallcaps"
+        android:fontFamily="@font/sanfran"
+        android:hint="User name"
         android:textColor="@color/white"
+        android:textColorHint="#A4A4F7"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.625"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.33"
-        android:hint="User name"
-        android:textColorHint="#fff"/>
+        app:layout_constraintVertical_bias="0.33" />
 
     <Button
         android:id="@+id/showInfo"

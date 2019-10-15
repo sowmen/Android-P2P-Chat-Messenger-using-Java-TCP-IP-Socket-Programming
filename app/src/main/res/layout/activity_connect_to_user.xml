@@ -24,14 +24,14 @@
         android:hint="IP ADDRESS"
         android:inputType="number|textWebEditText"
         android:textColor="#fff"
+        android:textColorHint="#A4A4F7"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.519"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.249"
-        android:textColorHint="#fff"
-        android:textSize="18sp"/>
+        app:layout_constraintVertical_bias="0.249" />
 
 
     <EditText
@@ -47,7 +47,7 @@
         android:hint="PORT NUMBER"
         android:inputType="number|textWebEditText"
         android:textColor="#fff"
-        android:textColorHint="#fff"
+        android:textColorHint="#A4A4F7"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
