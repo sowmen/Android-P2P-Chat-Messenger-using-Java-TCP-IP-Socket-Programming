@@ -13,9 +13,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/iconss"
         android:label="ChatFull"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/iconss"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ConnectToUserActivity" />
