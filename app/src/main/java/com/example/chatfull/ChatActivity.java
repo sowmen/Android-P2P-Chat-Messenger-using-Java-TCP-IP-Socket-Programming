@@ -93,6 +93,8 @@ public class ChatActivity extends AppCompatActivity
     List<Message> messageArrayList;
     boolean saved = false, loaded = false, offline = false;
 
+    Dialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +102,8 @@ public class ChatActivity extends AppCompatActivity
         isStoragePermissionGranted();
 
         user = (User) getIntent().getSerializableExtra("user");
+        Dialog dg = (Dialog) getIntent().getSerializableExtra("dialog");
+        dialog = DialogViewActivity.dialogsAdapter.getItemById(dg.getId());
 
         messageReceiveServer = new MessageReceiveServer(ShowInfoActivity.getSelfIpAddress(), ShowInfoActivity.getSelfPort(), this);
 
@@ -252,7 +256,7 @@ public class ChatActivity extends AppCompatActivity
                         .setPositiveButton("ok", new ColorPickerClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
-                                Message message = new Message(Integer.toString(++cnt), MainActivity.me, null, Calendar.getInstance().getTime());
+                                Message message = new Message(Integer.toString(++cnt), DialogViewActivity.me, null, Calendar.getInstance().getTime());
                                 message.setColor(selectedColor);
                                 message.setIsColor(true);
 
@@ -276,9 +280,12 @@ public class ChatActivity extends AppCompatActivity
     public void onBtnSendClick(View view) {
         if (input.getText().toString() == null) return;
 
-        Message message = new Message(Integer.toString(++cnt), MainActivity.me, input.getText().toString(), Calendar.getInstance().getTime());
+        Message message = new Message(Integer.toString(++cnt), DialogViewActivity.me, input.getText().toString(), Calendar.getInstance().getTime());
         message.setIsImage(false);
         message.setFilename(null);
+        dialog.setLastMessage(message);
+        DialogViewActivity.dialogsAdapter.updateItemById(dialog);
+
         adapter.addToStart(message, true);
 
         messageArrayList.add(message);
@@ -311,7 +318,7 @@ public class ChatActivity extends AppCompatActivity
         if (requestCode == PICK_FILE_REQUEST && data != null) {
             if (resultCode == RESULT_OK) {
                 Uri file = data.getData();
-                Message message = new Message(Integer.toString(++cnt), MainActivity.me, null, Calendar.getInstance().getTime());
+                Message message = new Message(Integer.toString(++cnt), DialogViewActivity.me, null, Calendar.getInstance().getTime());
                 message.setFilename(getFileName(file));
                 try {
                     message.setFile(getBytes(this, file));
@@ -332,7 +339,7 @@ public class ChatActivity extends AppCompatActivity
         } else if (requestCode == PICK_IMAGE_REQUEST && data != null) {
             if (resultCode == RESULT_OK) {
                 Uri file = data.getData();
-                Message message = new Message(Integer.toString(++cnt), MainActivity.me, null, Calendar.getInstance().getTime());
+                Message message = new Message(Integer.toString(++cnt), DialogViewActivity.me, null, Calendar.getInstance().getTime());
                 message.setFilename(getFileName(file));
                 try {
                     message.setFile(getBytes(this, file));
@@ -454,6 +461,8 @@ public class ChatActivity extends AppCompatActivity
                         msg.setUser(user);
                         adapter.addToStart(msg, true);
                         messageArrayList.add(msg);
+                        dialog.setLastMessage(msg);
+                        DialogViewActivity.dialogsAdapter.updateItemById(dialog);
                     } else if (msg.isImage()) {
                         msg.setUser(user);
                         adapter.addToStart(msg, true);
@@ -490,6 +499,7 @@ public class ChatActivity extends AppCompatActivity
             editor.commit();
             saved = true;
         }
+
         super.onPause();
     }
 
@@ -507,7 +517,7 @@ public class ChatActivity extends AppCompatActivity
         }
         loaded = false;
         if(offline == false) {
-            Message message = new Message(Integer.toString(++cnt), MainActivity.me, null);
+            Message message = new Message(Integer.toString(++cnt), DialogViewActivity.me, null);
             message.setOffline(true);
             sender = new SendMessage(user.getIpAddress(), user.getPort(), message, this);
             sender.execute();

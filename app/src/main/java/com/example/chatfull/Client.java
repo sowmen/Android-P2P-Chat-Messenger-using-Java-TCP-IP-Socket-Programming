@@ -34,7 +34,7 @@ public class Client extends AsyncTask<Void, Void, String> {
             if (clientSocket != null) {
 
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-                out.println(ShowInfoActivity.getSelfIpAddress() + ":" + ShowInfoActivity.getSelfPort() + "_" + MainActivity.me.getName());
+                out.println(ShowInfoActivity.getSelfIpAddress() + ":" + ShowInfoActivity.getSelfPort() + "_" + DialogViewActivity.me.getName());
 
                 Log.e("CLIENT", "After Connection");
                 user = new User(dstAddress, dstPort);

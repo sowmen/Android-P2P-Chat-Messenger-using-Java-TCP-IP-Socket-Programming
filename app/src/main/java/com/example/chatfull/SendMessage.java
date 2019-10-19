@@ -2,6 +2,7 @@ package com.example.chatfull;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -54,7 +55,15 @@ public class SendMessage extends AsyncTask<Void, Void, String> {
                 activity.stopSender();
             }
         } catch (Exception e) {
-            Log.e("SEND_MSG", "ConnectHoyNai " + message.getText());
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(activity.getApplicationContext(), "Message not sent, Receiver Offline", Toast.LENGTH_SHORT).show();
+                    activity.adapter.deleteById(message.getId());
+                    activity.messageArrayList.remove(message);
+                }
+            });
+
             e.printStackTrace();
         }
         return null;

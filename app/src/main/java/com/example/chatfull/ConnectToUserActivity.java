@@ -31,11 +31,11 @@ public class ConnectToUserActivity extends AppCompatActivity{
 
     public void setUser(User user) {
         this.user = user;
-        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-        intent.putExtra("user", myClient.user);
-
+        Intent data = new Intent();
+        data.putExtra("user",user);
+        setResult(RESULT_OK,data);
         progressOverlay.setVisibility(View.INVISIBLE);
-        startActivity(intent);
+        finish();
     }
 
     @Override

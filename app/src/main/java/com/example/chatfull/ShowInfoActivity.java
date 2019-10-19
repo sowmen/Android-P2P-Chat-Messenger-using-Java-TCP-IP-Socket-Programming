@@ -22,9 +22,10 @@ public class ShowInfoActivity extends AppCompatActivity {
     private Server myServer;
 
     public void setConnected(User user) {
-        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-        intent.putExtra("user", user);
-        startActivity(intent);
+        Intent data = new Intent();
+        data.putExtra("user",user);
+        setResult(RESULT_OK,data);
+        finish();
     }
 
 

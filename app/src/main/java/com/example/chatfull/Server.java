@@ -58,7 +58,7 @@ public class Server {
 
                     //---Sending self name---
                     try {
-                        String response_message = self_ip_address + ":" + self_port + "_" + MainActivity.me.getName();
+                        String response_message = self_ip_address + ":" + self_port + "_" + DialogViewActivity.me.getName();
                         PrintWriter out = new PrintWriter(received_userSocket.getOutputStream(), true);
                         out.println(response_message);
 

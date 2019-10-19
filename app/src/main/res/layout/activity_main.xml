@@ -10,6 +10,28 @@
     tools:context=".MainActivity">
 
 
+    <Button
+        android:id="@+id/continue_btn"
+        android:layout_width="250dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/buttonshape"
+        android:elevation="25dp"
+        android:fontFamily="@font/moon_bold"
+        android:text="Continue"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameInput"
+        app:layout_constraintVertical_bias="0.279" />
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
@@ -28,8 +50,8 @@
 
     <EditText
         android:id="@+id/nameInput"
-        android:layout_width="240dp"
-        android:layout_height="50dp"
+        android:layout_width="229dp"
+        android:layout_height="51dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -41,50 +63,30 @@
         android:textColorHint="#A4A4F7"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.625"
+        app:layout_constraintHorizontal_bias="0.567"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.33" />
 
-    <Button
-        android:id="@+id/showInfo"
-        android:layout_width="279dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-
-        android:layout_marginBottom="250dp"
-        android:background="@drawable/buttonshape"
-        android:elevation="25dp"
-        android:fontFamily="@font/moon_bold"
-        android:text="Show information"
-        android:textColor="#FFFFFF"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/enterInfo"
-        android:layout_width="277dp"
-        android:layout_height="45dp"
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/buttonshape"
-        android:elevation="10dp"
-
-        android:fontFamily="@font/moon_bold"
-        android:text="Enter Ip : port"
-        android:textColor="#FFFFFF"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/showInfo"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/sanfran"
+        android:gravity="center"
+        android:text="Please Enter Username\nThis will be your Unique ID"
+        android:textColor="#A4A4F7"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/nameInput"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameInput"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.468" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
