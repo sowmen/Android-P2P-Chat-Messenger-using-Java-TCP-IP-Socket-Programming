@@ -193,7 +193,7 @@ public class DialogViewActivity extends AppCompatActivity
                     dialog = new Dialog(user.getName(), user.getName(), image, new ArrayList<User>(Arrays.asList(user)), null, 0);
                     dialogsAdapter.addItem(0, dialog);
 
-                    dialogArrayList = new ArrayList<>();
+//                    dialogArrayList = new ArrayList<>();
                     dialogArrayList.add(dialog);
 
                     String jsonDataStringDialog = gson.toJson(dialogArrayList);
